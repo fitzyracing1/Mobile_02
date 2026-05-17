@@ -20,7 +20,6 @@ export default function App() {
   }, []);
 
   if (appState === 'loading') {
-    // Render nothing (splash screen handles this on device)
     return <View style={styles.root} />;
   }
 
