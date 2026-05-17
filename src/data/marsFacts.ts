@@ -197,7 +197,7 @@ export const marsFacts: MarsFact[] = [
   {
     id: 'comp-5',
     category: 'Comparison',
-    icon: '🧲',
+    icon: '🧋',
     title: 'No Global Magnetic Field',
     shortFact: 'Mars has no global magnetic field — its core cooled and solidified billions of years ago.',
     fullDetail:
