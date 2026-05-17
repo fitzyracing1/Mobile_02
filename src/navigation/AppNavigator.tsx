@@ -3,13 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, Platform } from 'react-native';
-import { MainTabParamList, MissionsStackParamList } from '../types';
+import { MainTabParamList, MissionsStackParamList, RootStackParamList } from '../types';
 import HomeScreen from '../screens/HomeScreen';
 import JourneyScreen from '../screens/JourneyScreen';
 import MissionsScreen from '../screens/MissionsScreen';
 import MissionDetailScreen from '../screens/MissionDetailScreen';
 import FactsScreen from '../screens/FactsScreen';
 import QuizScreen from '../screens/QuizScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 import { theme } from '../theme';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -41,6 +42,74 @@ function MissionsStackNavigator() {
   );
 }
 
+function MainTabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: theme.colors.backgroundSecondary,
+          borderTopColor: theme.colors.borderLight,
+          borderTopWidth: 1,
+          paddingBottom: Platform.OS === 'ios' ? 0 : 8,
+          paddingTop: 8,
+          height: Platform.OS === 'ios' ? 84 : 64,
+        },
+        tabBarActiveTintColor: theme.colors.accent,
+        tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          marginBottom: Platform.OS === 'ios' ? 0 : 4,
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: 'Overview',
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size ?? 22, color }}>🔴</Text>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Journey"
+        component={JourneyScreen}
+        options={{
+          tabBarLabel: 'Journey',
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size ?? 22, color }}>🚀</Text>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Missions"
+        component={MissionsStackNavigator}
+        options={{
+          tabBarLabel: 'Missions',
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size ?? 22, color }}>🛸</Text>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Facts"
+        component={FactsStackNavigator}
+        options={{
+          tabBarLabel: 'Mars Facts',
+          tabBarIcon: ({ color, size }) => (
+            <Text style={{ fontSize: size ?? 22, color }}>📡</Text>
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+const RootStack = createNativeStackNavigator<RootStackParamList>();
+
 export default function AppNavigator() {
   return (
     <NavigationContainer
@@ -56,67 +125,14 @@ export default function AppNavigator() {
         },
       }}
     >
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: theme.colors.backgroundSecondary,
-            borderTopColor: theme.colors.borderLight,
-            borderTopWidth: 1,
-            paddingBottom: Platform.OS === 'ios' ? 0 : 8,
-            paddingTop: 8,
-            height: Platform.OS === 'ios' ? 84 : 64,
-          },
-          tabBarActiveTintColor: theme.colors.accent,
-          tabBarInactiveTintColor: theme.colors.textMuted,
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: '600',
-            marginBottom: Platform.OS === 'ios' ? 0 : 4,
-          },
-        }}
-      >
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            tabBarLabel: 'Overview',
-            tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: size ?? 22, color }}>🔴</Text>
-            ),
-          }}
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+        <RootStack.Screen name="Main" component={MainTabNavigator} />
+        <RootStack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{ presentation: 'modal' }}
         />
-        <Tab.Screen
-          name="Journey"
-          component={JourneyScreen}
-          options={{
-            tabBarLabel: 'Journey',
-            tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: size ?? 22, color }}>🚀</Text>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Missions"
-          component={MissionsStackNavigator}
-          options={{
-            tabBarLabel: 'Missions',
-            tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: size ?? 22, color }}>🛸</Text>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Facts"
-          component={FactsStackNavigator}
-          options={{
-            tabBarLabel: 'Mars Facts',
-            tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: size ?? 22, color }}>📡</Text>
-            ),
-          }}
-        />
-      </Tab.Navigator>
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }

@@ -44,3 +44,8 @@ export type MissionsStackParamList = {
   MissionsList: undefined;
   MissionDetail: { mission: Mission };
 };
+
+export type RootStackParamList = {
+  Main: undefined;
+  Settings: undefined;
+};

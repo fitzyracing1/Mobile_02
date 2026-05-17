@@ -6,6 +6,7 @@ import { StyleSheet, View } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import { hasSeenOnboarding } from './src/storage/onboarding';
+import { SettingsProvider } from './src/context/SettingsContext';
 
 type AppState = 'loading' | 'onboarding' | 'app';
 
@@ -25,12 +26,14 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <StatusBar style="light" />
-      {appState === 'onboarding' ? (
-        <OnboardingScreen onDone={() => setAppState('app')} />
-      ) : (
-        <AppNavigator />
-      )}
+      <SettingsProvider>
+        <StatusBar style="light" />
+        {appState === 'onboarding' ? (
+          <OnboardingScreen onDone={() => setAppState('app')} />
+        ) : (
+          <AppNavigator />
+        )}
+      </SettingsProvider>
     </GestureHandlerRootView>
   );
 }
