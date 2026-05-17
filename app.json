@@ -1,47 +1,27 @@
 {
   "expo": {
-    "name": "Running Tracker",
-    "slug": "running-tracker",
+    "name": "Road to Mars",
+    "slug": "road-to-mars",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
       "resizeMode": "contain",
-      "backgroundColor": "#0D0D0D"
+      "backgroundColor": "#0A0A0F"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.runningtracker.app",
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Running Tracker uses your location to track your run route and calculate distance.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Running Tracker uses your location to track your run route and calculate distance even when the app is in the background.",
-        "UIBackgroundModes": ["location"]
-      }
+      "supportsTablet": true,
+      "bundleIdentifier": "com.roadtomars.app"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0D0D0D"
+        "backgroundColor": "#0A0A0F"
       },
-      "package": "com.runningtracker.app",
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION"
-      ]
-    },
-    "plugins": [
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Running Tracker uses your location to track your runs.",
-          "locationWhenInUsePermission": "Running Tracker uses your location to track your runs.",
-          "isAndroidBackgroundLocationEnabled": true
-        }
-      ]
-    ]
+      "package": "com.roadtomars.app"
+    }
   }
 }

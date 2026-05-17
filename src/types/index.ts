@@ -1,37 +1,41 @@
-export interface Coordinate {
-  latitude: number;
-  longitude: number;
-  altitude?: number | null;
-  timestamp?: number;
-}
+export type MissionStatus = 'completed' | 'active' | 'planned';
+export type MissionType = 'rover' | 'lander' | 'orbiter' | 'flyby' | 'crewed' | 'sample-return';
+export type FilterTab = 'All' | 'Past' | 'Active' | 'Future';
 
-export interface Run {
+export interface Mission {
   id: string;
-  date: string; // ISO 8601 string
-  duration: number; // seconds
-  distance: number; // meters
-  coordinates: Coordinate[];
-  avgPace: number; // seconds per km
+  name: string;
+  agency: string;
+  year: number;
+  type: MissionType;
+  status: MissionStatus;
+  description: string;
+  highlights: string[];
 }
 
-export type RunStatus = 'idle' | 'active' | 'paused' | 'stopped';
-
-export interface RunState {
-  status: RunStatus;
-  elapsed: number; // seconds
-  distance: number; // meters
-  coordinates: Coordinate[];
-  currentPace: number; // seconds per km
-  avgPace: number; // seconds per km
+export interface JourneyStep {
+  id: string;
+  stepNumber: number;
+  icon: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  keyFacts: { label: string; value: string }[];
+  durationLabel?: string;
 }
 
-export type RootStackParamList = {
-  MainTabs: undefined;
-  ActiveRun: undefined;
-  RunDetail: { run: Run };
-};
+export interface MarsFact {
+  id: string;
+  category: 'Atmosphere' | 'Geography' | 'Moons' | 'Comparison';
+  icon: string;
+  title: string;
+  shortFact: string;
+  fullDetail: string;
+}
 
 export type MainTabParamList = {
   Home: undefined;
-  History: undefined;
+  Journey: undefined;
+  Missions: undefined;
+  Facts: undefined;
 };
