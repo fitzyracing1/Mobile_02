@@ -3,10 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, Platform } from 'react-native';
-import { MainTabParamList } from '../types';
+import { MainTabParamList, MissionsStackParamList } from '../types';
 import HomeScreen from '../screens/HomeScreen';
 import JourneyScreen from '../screens/JourneyScreen';
 import MissionsScreen from '../screens/MissionsScreen';
+import MissionDetailScreen from '../screens/MissionDetailScreen';
 import FactsScreen from '../screens/FactsScreen';
 import QuizScreen from '../screens/QuizScreen';
 import { theme } from '../theme';
@@ -26,6 +27,17 @@ function FactsStackNavigator() {
       <FactsStack.Screen name="FactsHome" component={FactsScreen} />
       <FactsStack.Screen name="Quiz" component={QuizScreen} />
     </FactsStack.Navigator>
+  );
+}
+
+const MissionsStack = createNativeStackNavigator<MissionsStackParamList>();
+
+function MissionsStackNavigator() {
+  return (
+    <MissionsStack.Navigator screenOptions={{ headerShown: false }}>
+      <MissionsStack.Screen name="MissionsList" component={MissionsScreen} />
+      <MissionsStack.Screen name="MissionDetail" component={MissionDetailScreen} />
+    </MissionsStack.Navigator>
   );
 }
 
@@ -86,7 +98,7 @@ export default function AppNavigator() {
         />
         <Tab.Screen
           name="Missions"
-          component={MissionsScreen}
+          component={MissionsStackNavigator}
           options={{
             tabBarLabel: 'Missions',
             tabBarIcon: ({ color, size }) => (

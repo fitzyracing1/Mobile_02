@@ -39,3 +39,8 @@ export type MainTabParamList = {
   Missions: undefined;
   Facts: undefined;
 };
+
+export type MissionsStackParamList = {
+  MissionsList: undefined;
+  MissionDetail: { mission: Mission };
+};
