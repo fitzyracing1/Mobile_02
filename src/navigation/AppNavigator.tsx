@@ -1,15 +1,33 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text, Platform } from 'react-native';
 import { MainTabParamList } from '../types';
 import HomeScreen from '../screens/HomeScreen';
 import JourneyScreen from '../screens/JourneyScreen';
 import MissionsScreen from '../screens/MissionsScreen';
 import FactsScreen from '../screens/FactsScreen';
+import QuizScreen from '../screens/QuizScreen';
 import { theme } from '../theme';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
+
+type FactsStackParamList = {
+  FactsHome: undefined;
+  Quiz: undefined;
+};
+
+const FactsStack = createNativeStackNavigator<FactsStackParamList>();
+
+function FactsStackNavigator() {
+  return (
+    <FactsStack.Navigator screenOptions={{ headerShown: false }}>
+      <FactsStack.Screen name="FactsHome" component={FactsScreen} />
+      <FactsStack.Screen name="Quiz" component={QuizScreen} />
+    </FactsStack.Navigator>
+  );
+}
 
 export default function AppNavigator() {
   return (
@@ -78,7 +96,7 @@ export default function AppNavigator() {
         />
         <Tab.Screen
           name="Facts"
-          component={FactsScreen}
+          component={FactsStackNavigator}
           options={{
             tabBarLabel: 'Mars Facts',
             tabBarIcon: ({ color, size }) => (
