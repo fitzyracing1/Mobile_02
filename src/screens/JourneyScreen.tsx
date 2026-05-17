@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  FlatList,
-  Dimensions,
+  TouchableOpacity,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,62 +15,116 @@ import { theme } from '../theme';
 import { journeySteps } from '../data/journeySteps';
 import { JourneyStep } from '../types';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = SCREEN_WIDTH * 0.78;
-
-function TimelineCard({ step, index }: { step: JourneyStep; index: number }) {
-  const isLast = index === journeySteps.length - 1;
-
-  return (
-    <View style={[styles.timelineCard, { width: CARD_WIDTH }]}>
-      <LinearGradient
-        colors={[theme.colors.backgroundCard, '#1A0E0A']}
-        style={styles.timelineCardGradient}
-      >
-        <View style={styles.stepIndicator}>
-          <View style={styles.stepNumber}>
-            <Text style={styles.stepNumberText}>{step.stepNumber}</Text>
-          </View>
-          {!isLast && <View style={styles.stepLine} />}
-        </View>
-        <View style={styles.timelineContent}>
-          <Text style={styles.timelineIcon}>{step.icon}</Text>
-          <Text style={styles.timelineTitle}>{step.title}</Text>
-          {step.durationLabel && (
-            <View style={styles.durationBadge}>
-              <Text style={styles.durationText}>{step.durationLabel}</Text>
-            </View>
-          )}
-          <Text style={styles.timelineSubtitle}>{step.subtitle}</Text>
-        </View>
-      </LinearGradient>
-    </View>
-  );
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-function StepDetail({ step }: { step: JourneyStep }) {
+const ACCENT = '#E8532A';
+const LINE_MUTED = '#2A2A35';
+const BADGE_MUTED = '#1E1E2A';
+const TOTAL_STEPS = journeySteps.length;
+const BADGE_SIZE = 32;
+const LINE_WIDTH = 2;
+const LEFT_COL_WIDTH = 48;
+
+function getPhaseStatus(stepNumber: number): 'current' | 'future' {
+  return stepNumber === 1 ? 'current' : 'future';
+}
+
+interface TimelineItemProps {
+  step: JourneyStep;
+  isLast: boolean;
+}
+
+function TimelineItem({ step, isLast }: TimelineItemProps) {
+  const [expanded, setExpanded] = useState(false);
+  const status = getPhaseStatus(step.stepNumber);
+  const isCurrent = status === 'current';
+  const lineColor = isCurrent ? ACCENT : LINE_MUTED;
+  const badgeBg = isCurrent ? ACCENT : BADGE_MUTED;
+  const badgeTextColor = isCurrent ? theme.colors.white : theme.colors.textMuted;
+
+  function toggleExpanded() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded((prev) => !prev);
+  }
+
+  const factPairs: Array<[typeof step.keyFacts[0], typeof step.keyFacts[0] | null]> = [];
+  for (let i = 0; i < step.keyFacts.length; i += 2) {
+    factPairs.push([step.keyFacts[i], step.keyFacts[i + 1] ?? null]);
+  }
+
   return (
-    <View style={styles.stepDetail}>
-      <View style={styles.stepDetailHeader}>
-        <View style={styles.stepDetailIconBox}>
-          <Text style={styles.stepDetailIcon}>{step.icon}</Text>
+    <View style={styles.timelineItem}>
+      <View style={styles.timelineLeft}>
+        <View style={[styles.lineSegmentTop, { backgroundColor: lineColor }]} />
+        <View style={[styles.stepBadge, { backgroundColor: badgeBg }]}>
+          <Text style={[styles.stepBadgeText, { color: badgeTextColor }]}>{step.stepNumber}</Text>
         </View>
-        <View style={styles.stepDetailMeta}>
-          <Text style={styles.stepDetailNum}>Step {step.stepNumber}</Text>
-          <Text style={styles.stepDetailTitle}>{step.title}</Text>
-          <Text style={styles.stepDetailSubtitle}>{step.subtitle}</Text>
-        </View>
+        {!isLast ? (
+          <View style={[styles.lineSegmentBottom, { backgroundColor: LINE_MUTED }]} />
+        ) : (
+          <View style={styles.lineSegmentBottomEmpty} />
+        )}
       </View>
-      <Text style={styles.stepDetailDescription}>{step.description}</Text>
-      <View style={styles.keyFacts}>
-        <Text style={styles.keyFactsTitle}>Key Facts</Text>
-        {step.keyFacts.map((fact, i) => (
-          <View key={i} style={styles.keyFactRow}>
-            <Text style={styles.keyFactLabel}>{fact.label}</Text>
-            <Text style={styles.keyFactValue}>{fact.value}</Text>
+
+      <TouchableOpacity
+        style={[styles.card, isCurrent && styles.cardCurrent]}
+        onPress={toggleExpanded}
+        activeOpacity={0.85}
+      >
+        <View style={styles.cardHeaderRow}>
+          <Text style={styles.cardIcon}>{step.icon}</Text>
+          <View style={styles.cardHeaderMeta}>
+            <Text style={[styles.phaseLabel, isCurrent && styles.phaseLabelCurrent]}>
+              PHASE {step.stepNumber}{isCurrent ? '  •  CURRENT ERA' : ''}
+            </Text>
+            {step.durationLabel && (
+              <View style={[styles.durationPill, isCurrent && styles.durationPillCurrent]}>
+                <Text style={[styles.durationPillText, isCurrent && styles.durationPillTextCurrent]}>
+                  {step.durationLabel}
+                </Text>
+              </View>
+            )}
           </View>
-        ))}
-      </View>
+        </View>
+
+        <Text style={styles.cardTitle}>{step.title}</Text>
+        <Text style={styles.cardSubtitle}>{step.subtitle}</Text>
+
+        {expanded && (
+          <View style={styles.expandedContent}>
+            <View style={styles.expandedDivider} />
+            <Text style={styles.descriptionText}>{step.description}</Text>
+            <View style={styles.keyFactsContainer}>
+              <Text style={styles.keyFactsHeading}>KEY FACTS</Text>
+              {factPairs.map((pair, pairIndex) => (
+                <View key={pairIndex} style={styles.factRow}>
+                  <View style={styles.factCell}>
+                    <Text style={styles.factLabel}>{pair[0].label}</Text>
+                    <Text style={styles.factValue}>{pair[0].value}</Text>
+                  </View>
+                  {pair[1] ? (
+                    <>
+                      <View style={styles.factCellDivider} />
+                      <View style={styles.factCell}>
+                        <Text style={styles.factLabel}>{pair[1].label}</Text>
+                        <Text style={styles.factValue}>{pair[1].value}</Text>
+                      </View>
+                    </>
+                  ) : (
+                    <View style={styles.factCell} />
+                  )}
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        <View style={styles.expandToggle}>
+          <Text style={styles.expandToggleText}>{expanded ? '▲  Close' : '▼  Details'}</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -76,77 +132,41 @@ function StepDetail({ step }: { step: JourneyStep }) {
 export default function JourneyScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <ScrollView
-        style={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <LinearGradient
-          colors={['#1A0500', theme.colors.background]}
-          style={styles.header}
-        >
-          <Text style={styles.eyebrow}>THE MISSION PLAN</Text>
-          <Text style={styles.title}>How We Get to Mars</Text>
-          <Text style={styles.subtitle}>
-            Six phases spanning 900 days — from launch to landing and back again.
-          </Text>
+      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <LinearGradient colors={['#0D1B3E', theme.colors.background]} style={styles.hero}>
+          <Text style={styles.heroTitle}>🚀 The Road to Mars</Text>
+          <Text style={styles.heroSubtitle}>6 Phases · ~900 Days · ~1.5M km</Text>
         </LinearGradient>
 
-        <View style={styles.timelineSection}>
-          <Text style={styles.sectionLabel}>MISSION PHASES</Text>
-          <FlatList
-            horizontal
-            data={journeySteps}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item, index }) => (
-              <TimelineCard step={item} index={index} />
-            )}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.timelineList}
-            snapToInterval={CARD_WIDTH + theme.spacing.sm}
-            decelerationRate="fast"
-          />
-          <Text style={styles.scrollHint}>← Swipe to see all phases →</Text>
-        </View>
-
-        <View style={styles.missionStats}>
-          <Text style={styles.sectionLabel}>TOTAL MISSION PROFILE</Text>
-          <View style={styles.missionStatsGrid}>
-            <View style={styles.missionStatItem}>
-              <Text style={styles.missionStatValue}>~900</Text>
-              <Text style={styles.missionStatLabel}>Total days</Text>
-            </View>
-            <View style={styles.missionStatDivider} />
-            <View style={styles.missionStatItem}>
-              <Text style={styles.missionStatValue}>~14</Text>
-              <Text style={styles.missionStatLabel}>Months in space</Text>
-            </View>
-            <View style={styles.missionStatDivider} />
-            <View style={styles.missionStatItem}>
-              <Text style={styles.missionStatValue}>~500</Text>
-              <Text style={styles.missionStatLabel}>Days on Mars</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.detailsSection}>
-          <Text style={styles.sectionLabel}>PHASE DETAILS</Text>
-          {journeySteps.map((step) => (
-            <StepDetail key={step.id} step={step} />
+        <View style={styles.timelineContainer}>
+          {journeySteps.map((step, index) => (
+            <TimelineItem key={step.id} step={step} isLast={index === TOTAL_STEPS - 1} />
           ))}
         </View>
 
-        <View style={styles.infoBox}>
-          <Text style={styles.infoBoxTitle}>Why a Hohmann Transfer?</Text>
-          <Text style={styles.infoBoxText}>
-            A Hohmann transfer orbit is an elliptical path around the Sun connecting two
-            circular orbits. It requires only two engine burns and uses the minimum
-            possible fuel for the journey. The trade-off is time — the spacecraft must
-            coast along this arc for ~7 months. Higher-energy "fast transit" trajectories
-            are possible but require significantly more propellant, adding mass and cost.
-            For crewed missions, faster transit times may be worth the extra fuel to
-            reduce radiation exposure and physiological stress.
-          </Text>
+        <View style={styles.statsCard}>
+          <Text style={styles.statsHeading}>MISSION STATS</Text>
+          <View style={styles.statsGrid}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>~900</Text>
+              <Text style={styles.statLabel}>Total days</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>~1.5M</Text>
+              <Text style={styles.statLabel}>km to Mars</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>~500</Text>
+              <Text style={styles.statLabel}>Days on surface</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>~7mo</Text>
+              <Text style={styles.statLabel}>Return journey</Text>
+            </View>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -156,49 +176,48 @@ export default function JourneyScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: theme.colors.background },
   scroll: { flex: 1 },
-  scrollContent: { paddingBottom: 40 },
-  header: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
-  eyebrow: { ...theme.typography.label, color: theme.colors.accent, letterSpacing: 2, marginBottom: 6 },
-  title: { fontSize: 32, fontWeight: '800', color: theme.colors.textPrimary, letterSpacing: -0.5 },
-  subtitle: { ...theme.typography.body, color: theme.colors.textSecondary, marginTop: 8, lineHeight: 22 },
-  timelineSection: { marginBottom: theme.spacing.md },
-  sectionLabel: { ...theme.typography.label, color: theme.colors.accent, letterSpacing: 2, paddingHorizontal: theme.spacing.md, marginBottom: theme.spacing.sm },
-  timelineList: { paddingHorizontal: theme.spacing.md, gap: theme.spacing.sm },
-  timelineCard: { borderRadius: theme.borderRadius.md, overflow: 'hidden', borderWidth: 1, borderColor: theme.colors.border },
-  timelineCardGradient: { padding: theme.spacing.md, height: 180, justifyContent: 'space-between' },
-  stepIndicator: { flexDirection: 'row', alignItems: 'center' },
-  stepNumber: { width: 28, height: 28, borderRadius: 14, backgroundColor: theme.colors.accent, justifyContent: 'center', alignItems: 'center' },
-  stepNumberText: { color: theme.colors.white, fontWeight: '800', fontSize: 14 },
-  stepLine: { flex: 1, height: 1, backgroundColor: theme.colors.accentDim, marginLeft: 8 },
-  timelineContent: { gap: 4 },
-  timelineIcon: { fontSize: 28 },
-  timelineTitle: { ...theme.typography.h3, color: theme.colors.textPrimary },
-  durationBadge: { alignSelf: 'flex-start', backgroundColor: theme.colors.accentDim, paddingHorizontal: 8, paddingVertical: 2, borderRadius: theme.borderRadius.full, borderWidth: 1, borderColor: theme.colors.accent },
-  durationText: { ...theme.typography.caption, color: theme.colors.accent },
-  timelineSubtitle: { ...theme.typography.caption, color: theme.colors.textSecondary, lineHeight: 16 },
-  scrollHint: { ...theme.typography.caption, color: theme.colors.textMuted, textAlign: 'center', marginTop: theme.spacing.sm, letterSpacing: 0.5 },
-  missionStats: { marginHorizontal: theme.spacing.md, marginBottom: theme.spacing.md },
-  missionStatsGrid: { flexDirection: 'row', backgroundColor: theme.colors.backgroundCard, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.borderRadius.md, padding: theme.spacing.md },
-  missionStatItem: { flex: 1, alignItems: 'center' },
-  missionStatValue: { fontSize: 28, fontWeight: '800', color: theme.colors.accent },
-  missionStatLabel: { ...theme.typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 2, textTransform: 'uppercase' },
-  missionStatDivider: { width: 1, backgroundColor: theme.colors.borderLight },
-  detailsSection: { paddingHorizontal: theme.spacing.md, marginBottom: theme.spacing.md },
-  stepDetail: { backgroundColor: theme.colors.backgroundCard, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.borderRadius.md, padding: theme.spacing.md, marginBottom: theme.spacing.md },
-  stepDetailHeader: { flexDirection: 'row', gap: theme.spacing.sm, marginBottom: theme.spacing.sm, alignItems: 'flex-start' },
-  stepDetailIconBox: { width: 52, height: 52, borderRadius: theme.borderRadius.sm, backgroundColor: theme.colors.accentDim, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.accent },
-  stepDetailIcon: { fontSize: 26 },
-  stepDetailMeta: { flex: 1 },
-  stepDetailNum: { ...theme.typography.caption, color: theme.colors.accent, textTransform: 'uppercase', letterSpacing: 1 },
-  stepDetailTitle: { ...theme.typography.h3, color: theme.colors.textPrimary, marginTop: 2 },
-  stepDetailSubtitle: { ...theme.typography.bodySmall, color: theme.colors.textSecondary, fontStyle: 'italic', marginTop: 2 },
-  stepDetailDescription: { ...theme.typography.body, color: theme.colors.textSecondary, lineHeight: 22, marginBottom: theme.spacing.md },
-  keyFacts: { backgroundColor: '#0F0F18', borderRadius: theme.borderRadius.sm, padding: theme.spacing.sm, gap: 6 },
-  keyFactsTitle: { ...theme.typography.label, color: theme.colors.accent, letterSpacing: 1, marginBottom: 4, textTransform: 'uppercase' },
-  keyFactRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4, borderBottomWidth: 1, borderBottomColor: theme.colors.borderLight },
-  keyFactLabel: { ...theme.typography.bodySmall, color: theme.colors.textSecondary, flex: 1 },
-  keyFactValue: { ...theme.typography.bodySmall, color: theme.colors.textPrimary, fontWeight: '600', textAlign: 'right', flex: 1 },
-  infoBox: { marginHorizontal: theme.spacing.md, backgroundColor: theme.colors.backgroundCard, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.borderRadius.md, padding: theme.spacing.md, borderLeftWidth: 3, borderLeftColor: theme.colors.accent },
-  infoBoxTitle: { ...theme.typography.h3, color: theme.colors.textPrimary, marginBottom: theme.spacing.sm },
-  infoBoxText: { ...theme.typography.body, color: theme.colors.textSecondary, lineHeight: 22 },
+  scrollContent: { paddingBottom: 48 },
+  hero: { paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.xl, paddingBottom: theme.spacing.xxl, alignItems: 'center' },
+  heroTitle: { fontSize: 30, fontWeight: '800', color: theme.colors.textPrimary, letterSpacing: -0.5, textAlign: 'center' },
+  heroSubtitle: { marginTop: 8, fontSize: 14, fontWeight: '500', color: theme.colors.textSecondary, letterSpacing: 1, textAlign: 'center' },
+  timelineContainer: { paddingHorizontal: theme.spacing.md, paddingTop: 4 },
+  timelineItem: { flexDirection: 'row', alignItems: 'stretch' },
+  timelineLeft: { width: LEFT_COL_WIDTH, alignItems: 'center' },
+  lineSegmentTop: { width: LINE_WIDTH, height: 20 },
+  stepBadge: { width: BADGE_SIZE, height: BADGE_SIZE, borderRadius: BADGE_SIZE / 2, justifyContent: 'center', alignItems: 'center', zIndex: 1 },
+  stepBadgeText: { fontSize: 14, fontWeight: '800' },
+  lineSegmentBottom: { width: LINE_WIDTH, flex: 1, minHeight: 16 },
+  lineSegmentBottomEmpty: { width: LINE_WIDTH, height: 16 },
+  card: { flex: 1, marginLeft: 12, marginBottom: 16, backgroundColor: theme.colors.backgroundCard, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.borderLight, padding: theme.spacing.md, overflow: 'hidden' },
+  cardCurrent: { borderColor: ACCENT, borderWidth: 1.5 },
+  cardHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, gap: 10 },
+  cardIcon: { fontSize: 32, lineHeight: 38 },
+  cardHeaderMeta: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 6, paddingTop: 4 },
+  phaseLabel: { fontSize: 11, fontWeight: '700', letterSpacing: 1.2, color: theme.colors.textMuted, textTransform: 'uppercase' },
+  phaseLabelCurrent: { color: ACCENT },
+  durationPill: { backgroundColor: theme.colors.borderLight, paddingHorizontal: 8, paddingVertical: 2, borderRadius: theme.borderRadius.full },
+  durationPillCurrent: { backgroundColor: '#2A1510', borderWidth: 1, borderColor: ACCENT },
+  durationPillText: { fontSize: 11, fontWeight: '600', color: theme.colors.textSecondary },
+  durationPillTextCurrent: { color: ACCENT },
+  cardTitle: { fontSize: 20, fontWeight: '700', color: theme.colors.textPrimary, letterSpacing: -0.2, marginBottom: 4 },
+  cardSubtitle: { fontSize: 13, fontWeight: '400', color: theme.colors.textSecondary, lineHeight: 18, marginBottom: 4 },
+  expandedContent: { marginTop: 8 },
+  expandedDivider: { height: 1, backgroundColor: theme.colors.borderLight, marginBottom: 12 },
+  descriptionText: { fontSize: 14, fontWeight: '400', color: theme.colors.textSecondary, lineHeight: 21, marginBottom: 14 },
+  keyFactsContainer: { backgroundColor: '#0D0D16', borderRadius: theme.borderRadius.sm, padding: theme.spacing.sm, marginBottom: 4 },
+  keyFactsHeading: { fontSize: 11, fontWeight: '700', letterSpacing: 1.5, color: ACCENT, marginBottom: 8, textTransform: 'uppercase' },
+  factRow: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: theme.colors.borderLight, paddingVertical: 6 },
+  factCell: { flex: 1, paddingHorizontal: 4, gap: 2 },
+  factCellDivider: { width: 1, backgroundColor: theme.colors.borderLight, marginHorizontal: 6 },
+  factLabel: { fontSize: 11, fontWeight: '500', color: theme.colors.textMuted, lineHeight: 15 },
+  factValue: { fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary, lineHeight: 18 },
+  expandToggle: { marginTop: 10, alignItems: 'center' },
+  expandToggleText: { fontSize: 12, fontWeight: '600', color: theme.colors.textMuted, letterSpacing: 0.5 },
+  statsCard: { marginHorizontal: theme.spacing.md, marginTop: theme.spacing.sm, backgroundColor: theme.colors.backgroundCard, borderRadius: theme.borderRadius.md, borderWidth: 1, borderColor: theme.colors.border, padding: theme.spacing.md },
+  statsHeading: { fontSize: 11, fontWeight: '700', letterSpacing: 2, color: ACCENT, textTransform: 'uppercase', marginBottom: theme.spacing.sm },
+  statsGrid: { flexDirection: 'row', alignItems: 'center' },
+  statItem: { flex: 1, alignItems: 'center' },
+  statValue: { fontSize: 22, fontWeight: '800', color: ACCENT, letterSpacing: -0.5 },
+  statLabel: { fontSize: 10, fontWeight: '500', color: theme.colors.textSecondary, textTransform: 'uppercase', textAlign: 'center', marginTop: 2, letterSpacing: 0.3 },
+  statDivider: { width: 1, height: 36, backgroundColor: theme.colors.borderLight },
 });
