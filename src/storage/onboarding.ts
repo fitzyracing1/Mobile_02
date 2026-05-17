@@ -15,6 +15,6 @@ export async function markOnboardingSeen(): Promise<void> {
   try {
     await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
   } catch {
-    // Silently ignore — user will see onboarding again next launch
+    // Silently ignore storage errors — user will see onboarding again next launch
   }
 }
