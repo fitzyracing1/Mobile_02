@@ -1,5 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../theme';
@@ -8,19 +14,35 @@ import { MissionCard } from '../components/MissionCard';
 import { FilterTab, Mission, MissionStatus } from '../types';
 
 const FILTER_TABS: FilterTab[] = ['All', 'Past', 'Active', 'Future'];
-const STATUS_FOR_FILTER: Record<FilterTab, MissionStatus | null> = { All: null, Past: 'completed', Active: 'active', Future: 'planned' };
+
+const STATUS_FOR_FILTER: Record<FilterTab, MissionStatus | null> = {
+  All: null,
+  Past: 'completed',
+  Active: 'active',
+  Future: 'planned',
+};
 
 function MissionStats() {
   const completed = missions.filter((m) => m.status === 'completed').length;
   const active = missions.filter((m) => m.status === 'active').length;
   const planned = missions.filter((m) => m.status === 'planned').length;
+
   return (
     <View style={statStyles.row}>
-      <View style={statStyles.item}><Text style={statStyles.value}>{completed}</Text><Text style={statStyles.label}>Completed</Text></View>
+      <View style={statStyles.item}>
+        <Text style={statStyles.value}>{completed}</Text>
+        <Text style={statStyles.label}>Completed</Text>
+      </View>
       <View style={statStyles.divider} />
-      <View style={statStyles.item}><Text style={[statStyles.value, { color: theme.colors.info }]}>{active}</Text><Text style={statStyles.label}>Active</Text></View>
+      <View style={statStyles.item}>
+        <Text style={[statStyles.value, { color: theme.colors.info }]}>{active}</Text>
+        <Text style={statStyles.label}>Active</Text>
+      </View>
       <View style={statStyles.divider} />
-      <View style={statStyles.item}><Text style={[statStyles.value, { color: theme.colors.warning }]}>{planned}</Text><Text style={statStyles.label}>Planned</Text></View>
+      <View style={statStyles.item}>
+        <Text style={[statStyles.value, { color: theme.colors.warning }]}>{planned}</Text>
+        <Text style={statStyles.label}>Planned</Text>
+      </View>
     </View>
   );
 }
@@ -35,6 +57,7 @@ const statStyles = StyleSheet.create({
 
 export default function MissionsScreen() {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('All');
+
   const filteredMissions = useMemo<Mission[]>(() => {
     const statusFilter = STATUS_FOR_FILTER[activeFilter];
     if (!statusFilter) return missions;
@@ -46,28 +69,53 @@ export default function MissionsScreen() {
       <LinearGradient colors={['#1A0500', theme.colors.background]} style={styles.header}>
         <Text style={styles.eyebrow}>EXPLORATION HISTORY</Text>
         <Text style={styles.title}>Mars Missions</Text>
-        <Text style={styles.subtitle}>From the first landers in 1976 to humanity's first crewed landing — every mission that gets us closer to Mars.</Text>
+        <Text style={styles.subtitle}>
+          From the first landers in 1976 to humanity’s first crewed
+          landing — every mission that gets us closer to Mars.
+        </Text>
       </LinearGradient>
-      <View style={styles.statsBar}><MissionStats /></View>
+
+      <View style={styles.statsBar}>
+        <MissionStats />
+      </View>
+
       <View style={styles.filterContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
           {FILTER_TABS.map((tab) => {
             const isActive = tab === activeFilter;
             return (
-              <TouchableOpacity key={tab} onPress={() => setActiveFilter(tab)} style={[styles.filterTab, isActive && styles.filterTabActive]} activeOpacity={0.75}>
-                <Text style={[styles.filterTabText, isActive && styles.filterTabTextActive]}>{tab}</Text>
+              <TouchableOpacity
+                key={tab}
+                onPress={() => setActiveFilter(tab)}
+                style={[styles.filterTab, isActive && styles.filterTabActive]}
+                activeOpacity={0.75}
+              >
+                <Text style={[styles.filterTabText, isActive && styles.filterTabTextActive]}>
+                  {tab}
+                </Text>
               </TouchableOpacity>
             );
           })}
         </ScrollView>
       </View>
+
       <ScrollView style={styles.list} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
         {filteredMissions.length === 0 ? (
-          <View style={styles.empty}><Text style={styles.emptyIcon}>🛸</Text><Text style={styles.emptyText}>No missions in this category</Text></View>
+          <View style={styles.empty}>
+            <Text style={styles.emptyIcon}>🛸</Text>
+            <Text style={styles.emptyText}>No missions in this category</Text>
+          </View>
         ) : (
-          filteredMissions.map((mission) => (<MissionCard key={mission.id} mission={mission} />))
+          filteredMissions.map((mission) => (
+            <MissionCard key={mission.id} mission={mission} />
+          ))
         )}
-        <View style={styles.timelineNote}><Text style={styles.timelineNoteText}>🗓 Data accurate as of May 2026. Mission timelines may shift based on funding, technical readiness, and launch window constraints.</Text></View>
+        <View style={styles.timelineNote}>
+          <Text style={styles.timelineNoteText}>
+            🗓 Data accurate as of May 2026. Mission timelines may shift based on
+            funding, technical readiness, and launch window constraints.
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

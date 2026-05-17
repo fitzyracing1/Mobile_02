@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  Dimensions,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../theme';
@@ -11,17 +18,27 @@ const CARD_WIDTH = SCREEN_WIDTH * 0.78;
 
 function TimelineCard({ step, index }: { step: JourneyStep; index: number }) {
   const isLast = index === journeySteps.length - 1;
+
   return (
     <View style={[styles.timelineCard, { width: CARD_WIDTH }]}>
-      <LinearGradient colors={[theme.colors.backgroundCard, '#1A0E0A']} style={styles.timelineCardGradient}>
+      <LinearGradient
+        colors={[theme.colors.backgroundCard, '#1A0E0A']}
+        style={styles.timelineCardGradient}
+      >
         <View style={styles.stepIndicator}>
-          <View style={styles.stepNumber}><Text style={styles.stepNumberText}>{step.stepNumber}</Text></View>
+          <View style={styles.stepNumber}>
+            <Text style={styles.stepNumberText}>{step.stepNumber}</Text>
+          </View>
           {!isLast && <View style={styles.stepLine} />}
         </View>
         <View style={styles.timelineContent}>
           <Text style={styles.timelineIcon}>{step.icon}</Text>
           <Text style={styles.timelineTitle}>{step.title}</Text>
-          {step.durationLabel && (<View style={styles.durationBadge}><Text style={styles.durationText}>{step.durationLabel}</Text></View>)}
+          {step.durationLabel && (
+            <View style={styles.durationBadge}>
+              <Text style={styles.durationText}>{step.durationLabel}</Text>
+            </View>
+          )}
           <Text style={styles.timelineSubtitle}>{step.subtitle}</Text>
         </View>
       </LinearGradient>
@@ -33,7 +50,9 @@ function StepDetail({ step }: { step: JourneyStep }) {
   return (
     <View style={styles.stepDetail}>
       <View style={styles.stepDetailHeader}>
-        <View style={styles.stepDetailIconBox}><Text style={styles.stepDetailIcon}>{step.icon}</Text></View>
+        <View style={styles.stepDetailIconBox}>
+          <Text style={styles.stepDetailIcon}>{step.icon}</Text>
+        </View>
         <View style={styles.stepDetailMeta}>
           <Text style={styles.stepDetailNum}>Step {step.stepNumber}</Text>
           <Text style={styles.stepDetailTitle}>{step.title}</Text>
@@ -57,38 +76,77 @@ function StepDetail({ step }: { step: JourneyStep }) {
 export default function JourneyScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <LinearGradient colors={['#1A0500', theme.colors.background]} style={styles.header}>
+      <ScrollView
+        style={styles.scroll}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <LinearGradient
+          colors={['#1A0500', theme.colors.background]}
+          style={styles.header}
+        >
           <Text style={styles.eyebrow}>THE MISSION PLAN</Text>
           <Text style={styles.title}>How We Get to Mars</Text>
-          <Text style={styles.subtitle}>Six phases spanning 900 days — from launch to landing and back again.</Text>
+          <Text style={styles.subtitle}>
+            Six phases spanning 900 days — from launch to landing and back again.
+          </Text>
         </LinearGradient>
 
         <View style={styles.timelineSection}>
           <Text style={styles.sectionLabel}>MISSION PHASES</Text>
-          <FlatList horizontal data={journeySteps} keyExtractor={(item) => item.id} renderItem={({ item, index }) => (<TimelineCard step={item} index={index} />)} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.timelineList} snapToInterval={CARD_WIDTH + theme.spacing.sm} decelerationRate="fast" />
+          <FlatList
+            horizontal
+            data={journeySteps}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item, index }) => (
+              <TimelineCard step={item} index={index} />
+            )}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.timelineList}
+            snapToInterval={CARD_WIDTH + theme.spacing.sm}
+            decelerationRate="fast"
+          />
           <Text style={styles.scrollHint}>← Swipe to see all phases →</Text>
         </View>
 
         <View style={styles.missionStats}>
           <Text style={styles.sectionLabel}>TOTAL MISSION PROFILE</Text>
           <View style={styles.missionStatsGrid}>
-            <View style={styles.missionStatItem}><Text style={styles.missionStatValue}>~900</Text><Text style={styles.missionStatLabel}>Total days</Text></View>
+            <View style={styles.missionStatItem}>
+              <Text style={styles.missionStatValue}>~900</Text>
+              <Text style={styles.missionStatLabel}>Total days</Text>
+            </View>
             <View style={styles.missionStatDivider} />
-            <View style={styles.missionStatItem}><Text style={styles.missionStatValue}>~14</Text><Text style={styles.missionStatLabel}>Months in space</Text></View>
+            <View style={styles.missionStatItem}>
+              <Text style={styles.missionStatValue}>~14</Text>
+              <Text style={styles.missionStatLabel}>Months in space</Text>
+            </View>
             <View style={styles.missionStatDivider} />
-            <View style={styles.missionStatItem}><Text style={styles.missionStatValue}>~500</Text><Text style={styles.missionStatLabel}>Days on Mars</Text></View>
+            <View style={styles.missionStatItem}>
+              <Text style={styles.missionStatValue}>~500</Text>
+              <Text style={styles.missionStatLabel}>Days on Mars</Text>
+            </View>
           </View>
         </View>
 
         <View style={styles.detailsSection}>
           <Text style={styles.sectionLabel}>PHASE DETAILS</Text>
-          {journeySteps.map((step) => (<StepDetail key={step.id} step={step} />))}
+          {journeySteps.map((step) => (
+            <StepDetail key={step.id} step={step} />
+          ))}
         </View>
 
         <View style={styles.infoBox}>
           <Text style={styles.infoBoxTitle}>Why a Hohmann Transfer?</Text>
-          <Text style={styles.infoBoxText}>A Hohmann transfer orbit is an elliptical path around the Sun connecting two circular orbits. It requires only two engine burns and uses the minimum possible fuel for the journey. The trade-off is time — the spacecraft must coast along this arc for ~7 months. Higher-energy "fast transit" trajectories are possible but require significantly more propellant, adding mass and cost. For crewed missions, faster transit times may be worth the extra fuel to reduce radiation exposure and physiological stress.</Text>
+          <Text style={styles.infoBoxText}>
+            A Hohmann transfer orbit is an elliptical path around the Sun connecting two
+            circular orbits. It requires only two engine burns and uses the minimum
+            possible fuel for the journey. The trade-off is time — the spacecraft must
+            coast along this arc for ~7 months. Higher-energy "fast transit" trajectories
+            are possible but require significantly more propellant, adding mass and cost.
+            For crewed missions, faster transit times may be worth the extra fuel to
+            reduce radiation exposure and physiological stress.
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>

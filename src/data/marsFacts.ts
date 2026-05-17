@@ -1,18 +1,134 @@
 import { MarsFact } from '../types';
 
 export const marsFacts: MarsFact[] = [
-  { id: 'atm-co2', category: 'Atmosphere', icon: '💨', title: 'Mostly Carbon Dioxide', shortFact: '95.3% CO₂ — unbreathable by humans', fullDetail: 'Mars\'s atmosphere is 95.3% carbon dioxide, 2.7% nitrogen, and 1.6% argon, with trace amounts of oxygen (0.13%) and water vapor. Atmospheric pressure averages just 610 Pascals — less than 1% of Earth\'s 101,325 Pa. At that pressure, exposed liquid water instantly boils away. Astronauts will require full pressure suits outdoors at all times.' },
-  { id: 'atm-thin', category: 'Atmosphere', icon: '🌬️', title: 'Dangerously Thin', shortFact: 'Pressure less than 1% of Earth — equivalent to 35 km altitude', fullDetail: 'The atmospheric pressure on Mars (0.006 atm) is roughly equivalent to being at 35 kilometers altitude on Earth — far above where any aircraft can fly and where exposed human blood would boil at body temperature. Despite its thinness, the atmosphere is dense enough to cause aerodynamic heating during entry and to drive global dust storms.' },
-  { id: 'atm-dust', category: 'Atmosphere', icon: '🌪️', title: 'Global Dust Storms', shortFact: 'Storms can envelop the entire planet for months', fullDetail: 'Mars experiences regional and occasionally global dust storms that can obscure the entire planet for weeks or months. The 2018 global dust storm ended the Opportunity rover\'s mission by blocking sunlight from its solar panels. Dust on Mars is electrostatically charged, clinging to solar panels and equipment. Future missions must account for dust accumulation on power systems.' },
-  { id: 'atm-temp', category: 'Atmosphere', icon: '🌡️', title: 'Extreme Temperature Range', shortFact: 'Average −60°C, ranging from −125°C to +20°C', fullDetail: 'Mars has a dramatically variable temperature range. At the poles in winter, temperatures plunge to −125°C, cold enough to freeze CO₂ out of the atmosphere into dry ice deposits. Near the equator during summer days, surface temperatures can briefly reach +20°C. The average global temperature is approximately −60°C. Thin atmosphere means rapid temperature swings after sunset.' },
-  { id: 'geo-olympus', category: 'Geography', icon: '🌋', title: 'Olympus Mons', shortFact: 'Tallest volcano in the solar system — 21.9 km high', fullDetail: 'Olympus Mons is a shield volcano on Mars that stands 21.9 kilometers above the surrounding plains — nearly three times the height of Mount Everest. Its base spans approximately 600 kilometers in diameter, larger than France. Olympus Mons grew so tall because Mars lacks tectonic plate movement, so volcanic material has piled on the same spot for billions of years.' },
-  { id: 'geo-valles', category: 'Geography', icon: '🏔️', title: 'Valles Marineris', shortFact: 'Canyon 4,000 km long, 7 km deep — dwarfs the Grand Canyon', fullDetail: 'Valles Marineris is a vast canyon system stretching over 4,000 kilometers in length (roughly the width of the United States), up to 600 kilometers wide, and 7 kilometers deep. By comparison, the Grand Canyon is 446 km long and 1.6 km deep. Valles Marineris formed primarily through tectonic rifting and erosion.' },
-  { id: 'geo-water-ice', category: 'Geography', icon: '🧊', title: 'Water Ice Confirmed', shortFact: 'Enough polar ice to cover Mars in 35 meters of water', fullDetail: 'Mars has confirmed water ice at both poles and in subsurface deposits at mid-latitudes. Scientists estimate the polar caps contain enough water ice that if melted it could cover the entire Martian surface in about 35 meters of water. In 2018, ESA\'s MARSIS radar reported evidence of a subglacial liquid water lake beneath the south polar ice.' },
-  { id: 'geo-dichotomy', category: 'Geography', icon: '🌐', title: 'The Great Dichotomy', shortFact: 'North lowlands vs southern highlands — a mystery billions of years old', fullDetail: 'Mars\'s surface is divided into two strikingly different hemispheres. The northern hemisphere consists largely of smooth, low-lying plains — possibly ancient ocean beds. The southern hemisphere is heavily cratered, geologically ancient highland terrain. This "Mars crustal dichotomy" is one of the great unsolved mysteries of planetary science.' },
-  { id: 'moon-phobos', category: 'Moons', icon: '🌑', title: 'Phobos', shortFact: 'Orbits Mars so fast it rises in the west and sets in the east', fullDetail: 'Phobos is the larger of Mars\'s two moons, measuring just 27 × 22 × 18 kilometers. It orbits Mars at only 6,000 km altitude and completes an orbit in just 7 hours 39 minutes, faster than Mars rotates. Tidal forces are slowly pulling Phobos closer; in roughly 50 million years it will either crash into Mars or break apart into a ring.' },
-  { id: 'moon-deimos', category: 'Moons', icon: '🔵', title: 'Deimos', shortFact: 'Tiny moon so small it looks like a bright star from Mars', fullDetail: 'Deimos is the smaller and more distant of Mars\'s two moons, measuring only 15 × 12 × 11 kilometers. Orbiting at 23,460 km, it takes 30.3 hours to complete one orbit. From the Martian surface, Deimos appears only slightly larger than a bright star. Both moons were discovered by Asaph Hall in 1877 and named after Greek gods of Dread and Panic.' },
-  { id: 'comp-gravity', category: 'Comparison', icon: '⚖️', title: 'Martian Gravity', shortFact: '38% of Earth\'s — you\'d weigh about 113 lbs if you weigh 300 lbs on Earth', fullDetail: 'Mars has a surface gravity of 3.72 m/s² — 38% of Earth\'s 9.81 m/s². A person weighing 70 kg on Earth would weigh about 26.6 kg on Mars. The lower gravity makes it easier to jump and carry loads, but causes significant physiological problems: muscle atrophy, bone density loss, cardiovascular deconditioning, and potential vision problems from fluid redistribution.' },
-  { id: 'comp-day', category: 'Comparison', icon: '🕐', title: 'The Martian Sol', shortFact: 'A Mars day is 24 hours, 37 minutes, 22 seconds', fullDetail: 'A Martian solar day ("sol") is 24 hours, 37 minutes, and 22 seconds — conveniently close to Earth\'s 24 hours. Mars mission controllers use "sol" as their unit of time, and rover operations are planned sol by sol. The Martian year is 687 Earth days (668.6 sols). Mars has seasons much like Earth due to its 25.2° axial tilt.' },
-  { id: 'comp-year', category: 'Comparison', icon: '📅', title: 'Martian Year', shortFact: 'A year on Mars is 687 Earth days — nearly twice as long', fullDetail: 'Mars orbits the Sun once every 686.97 Earth days — approximately 1.88 Earth years. Martian seasons are of unequal length due to Mars\'s elliptical orbit. Southern hemisphere summer occurs when Mars is closest to the Sun, making southern summers warmer but shorter. Mars has the most elliptical orbit of the terrestrial planets.' },
-  { id: 'comp-size', category: 'Comparison', icon: '🔴', title: 'Size of Mars', shortFact: 'Mars is about half Earth\'s diameter — but has similar land area', fullDetail: 'Mars has a diameter of 6,779 km — about 53% of Earth\'s 12,742 km. However, because Mars has no oceans, its total land surface area (144.8 million km²) is roughly similar to Earth\'s land area (148.9 million km²). Mars has a mass of 6.39 × 10²³ kg — about 10.7% of Earth\'s.' },
+  // Atmosphere
+  {
+    id: 'atm-co2',
+    category: 'Atmosphere',
+    icon: '💨',
+    title: 'Mostly Carbon Dioxide',
+    shortFact: '95.3% CO₂ — unbreathable by humans',
+    fullDetail:
+      "Mars's atmosphere is 95.3% carbon dioxide, 2.7% nitrogen, and 1.6% argon, with trace amounts of oxygen (0.13%) and water vapor. Atmospheric pressure averages just 610 Pascals — less than 1% of Earth's 101,325 Pa. At that pressure, exposed liquid water instantly boils away. Astronauts will require full pressure suits outdoors at all times, unlike on the Moon where only radiation and vacuum are the concerns.",
+  },
+  {
+    id: 'atm-thin',
+    category: 'Atmosphere',
+    icon: '🌬️',
+    title: 'Dangerously Thin',
+    shortFact: 'Pressure less than 1% of Earth — equivalent to 35 km altitude',
+    fullDetail:
+      'The atmospheric pressure on Mars (0.006 atm) is roughly equivalent to being at 35 kilometers altitude on Earth — far above where any aircraft can fly and where exposed human blood would boil at body temperature. Despite its thinness, the atmosphere is dense enough to cause significant aerodynamic heating during entry and to drive global dust storms. It also provides marginal protection from micrometeoroids.',
+  },
+  {
+    id: 'atm-dust',
+    category: 'Atmosphere',
+    icon: '🌪️',
+    title: 'Global Dust Storms',
+    shortFact: 'Storms can envelop the entire planet for months',
+    fullDetail:
+      "Mars experiences regional and occasionally global dust storms that can obscure the entire planet for weeks or months. The 2018 global dust storm ended the Opportunity rover's mission by blocking sunlight from its solar panels. Dust on Mars is electrostatically charged, clinging to solar panels and equipment. Dust particle size (~1 micron) means storms travel high into the atmosphere. Future missions must account for dust accumulation on power systems and potential inhalation hazards if suit seals fail.",
+  },
+  {
+    id: 'atm-temp',
+    category: 'Atmosphere',
+    icon: '🌡️',
+    title: 'Extreme Temperature Range',
+    shortFact: 'Average −60°C, ranging from −125°C to +20°C',
+    fullDetail:
+      'Mars has a dramatically variable temperature range. At the poles in winter, temperatures plunge to −125°C, cold enough to freeze CO₂ out of the atmosphere into dry ice deposits. Near the equator during summer days, surface temperatures can briefly reach +20°C. The average global temperature is approximately −60°C. Thin atmosphere means rapid temperature swings — a sunny afternoon might feel relatively warm, but temperatures can drop 100°C after sunset.',
+  },
+  // Geography
+  {
+    id: 'geo-olympus',
+    category: 'Geography',
+    icon: '🌋',
+    title: 'Olympus Mons',
+    shortFact: 'Tallest volcano in the solar system — 21.9 km high',
+    fullDetail:
+      "Olympus Mons is a shield volcano on Mars that stands 21.9 kilometers above the surrounding plains — nearly three times the height of Mount Everest above sea level. Its base spans approximately 600 kilometers in diameter, larger than France. The volcano is so wide that if you stood at its center, the rim would be below the horizon due to Mars's curvature. Olympus Mons grew so tall because Mars lacks tectonic plate movement, so volcanic material has piled on the same spot for billions of years.",
+  },
+  {
+    id: 'geo-valles',
+    category: 'Geography',
+    icon: '🏔️',
+    title: 'Valles Marineris',
+    shortFact: 'Canyon 4,000 km long, 7 km deep — dwarfs the Grand Canyon',
+    fullDetail:
+      'Valles Marineris is a vast canyon system stretching over 4,000 kilometers in length (roughly the width of the United States), up to 600 kilometers wide, and 7 kilometers deep. By comparison, the Grand Canyon is 446 km long and 1.6 km deep. Valles Marineris formed primarily through tectonic rifting and erosion. At its widest points, the canyon walls are too far apart to see from side to side. Scientists believe water once flowed through sections of this canyon system.',
+  },
+  {
+    id: 'geo-water-ice',
+    category: 'Geography',
+    icon: '🧊',
+    title: 'Water Ice Confirmed',
+    shortFact: 'Enough polar ice to cover Mars in 35 meters of water',
+    fullDetail:
+      "Mars has confirmed water ice at both poles and in subsurface deposits at mid-latitudes. The north polar ice cap is primarily water ice covered by a seasonal layer of frozen CO₂. Scientists estimate the polar caps contain enough water ice that if melted it could cover the entire Martian surface in about 35 meters of water. MRO's SHARAD radar has detected extensive subsurface water ice deposits. In 2018, ESA's MARSIS radar reported evidence of a subglacial liquid water lake beneath the south polar ice, though this finding is debated.",
+  },
+  {
+    id: 'geo-dichotomy',
+    category: 'Geography',
+    icon: '🌐',
+    title: 'The Great Dichotomy',
+    shortFact: 'North lowlands vs southern highlands — a mystery billions of years old',
+    fullDetail:
+      'Mars\'s surface is divided into two strikingly different hemispheres. The northern hemisphere consists largely of smooth, low-lying plains — possibly ancient ocean beds. The southern hemisphere is heavily cratered, geologically ancient highland terrain sitting several kilometers higher. This "Mars crustal dichotomy" is one of the great unsolved mysteries of planetary science. Leading theories include a massive impact early in Mars\'s history or an ancient convection pattern in the Martian mantle.',
+  },
+  // Moons
+  {
+    id: 'moon-phobos',
+    category: 'Moons',
+    icon: '🌑',
+    title: 'Phobos',
+    shortFact: 'Orbits Mars so fast it rises in the west and sets in the east',
+    fullDetail:
+      "Phobos is the larger of Mars's two moons, measuring just 27 × 22 × 18 kilometers. It orbits Mars at only 6,000 km altitude — far closer than any other moon in the solar system relative to its planet. Phobos completes an orbit in just 7 hours 39 minutes, faster than Mars rotates, causing it to rise in the west and set in the east twice per Martian day. Tidal forces are slowly pulling Phobos closer; in roughly 50 million years it will either crash into Mars or break apart into a ring.",
+  },
+  {
+    id: 'moon-deimos',
+    category: 'Moons',
+    icon: '🔵',
+    title: 'Deimos',
+    shortFact: 'Tiny moon so small it looks like a bright star from Mars',
+    fullDetail:
+      "Deimos is the smaller and more distant of Mars's two moons, measuring only 15 × 12 × 11 kilometers. Orbiting at 23,460 km, it takes 30.3 hours to complete one orbit — slightly longer than a Martian sol — making it drift slowly across the sky. From the Martian surface, Deimos appears only slightly larger than a bright star. Both moons were discovered by Asaph Hall in 1877 and are named after the Greek gods of Dread (Phobos) and Dread's twin brother Panic (Deimos). Their composition suggests they may be captured asteroids.",
+  },
+  // Comparison to Earth
+  {
+    id: 'comp-gravity',
+    category: 'Comparison',
+    icon: '⚖️',
+    title: 'Martian Gravity',
+    shortFact: "38% of Earth's — you'd weigh about 113 lbs if you weigh 300 lbs on Earth",
+    fullDetail:
+      "Mars has a surface gravity of 3.72 m/s² — 38% of Earth's 9.81 m/s². A person weighing 70 kg on Earth would weigh about 26.6 kg on Mars. The lower gravity makes it easier to jump and carry loads, but causes significant physiological problems for long-duration residents: muscle atrophy, bone density loss, cardiovascular deconditioning, and potential vision problems from fluid redistribution. Current evidence from the ISS suggests these effects are manageable with exercise, but the permanence of partial gravity exposure over years is unknown.",
+  },
+  {
+    id: 'comp-day',
+    category: 'Comparison',
+    icon: '🕐',
+    title: 'The Martian Sol',
+    shortFact: 'A Mars day is 24 hours, 37 minutes, 22 seconds',
+    fullDetail:
+      'A Martian solar day ("sol") is 24 hours, 37 minutes, and 22 seconds — conveniently close to Earth\'s 24 hours. Mars mission controllers use "sol" as their unit of time, and rover operations are planned sol by sol. The slight difference means mission teams on Earth gradually shift out of sync with local time, cycling through all hours of the day and night over weeks. The Martian year is 687 Earth days (668.6 sols). Mars has seasons much like Earth due to its 25.2° axial tilt (Earth tilts 23.5°).',
+  },
+  {
+    id: 'comp-year',
+    category: 'Comparison',
+    icon: '📅',
+    title: 'Martian Year',
+    shortFact: 'A year on Mars is 687 Earth days — nearly twice as long',
+    fullDetail:
+      "Mars orbits the Sun once every 686.97 Earth days — approximately 1.88 Earth years. This longer orbital period, combined with Mars's elliptical orbit, means Martian seasons are of unequal length. Southern hemisphere summer occurs when Mars is closest to the Sun (perihelion), making southern summers warmer but shorter, and southern winters colder and longer. Mars has the most elliptical orbit of the terrestrial planets, with aphelion being 21% farther from the Sun than perihelion.",
+  },
+  {
+    id: 'comp-size',
+    category: 'Comparison',
+    icon: '🔴',
+    title: 'Size of Mars',
+    shortFact: "Mars is about half Earth's diameter — but has similar land area",
+    fullDetail:
+      "Mars has a diameter of 6,779 km — about 53% of Earth's 12,742 km. Its volume is about 15% of Earth's. However, because Mars has no oceans, its total land surface area (144.8 million km²) is roughly similar to Earth's land area (148.9 million km²). Mars has a mass of 6.39 × 10²³ kg — about 10.7% of Earth's. Its lower density (3,933 kg/m³ vs Earth's 5,515 kg/m³) suggests a smaller iron core, which is consistent with its lack of a global magnetic field.",
+  },
 ];

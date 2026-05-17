@@ -73,7 +73,7 @@ export const missions: Mission[] = [
     type: 'rover',
     status: 'active',
     description:
-      "Curiosity rover landed in Gale Crater on August 6, 2012 using an entirely new 'sky crane' descent system — a rocket-powered hover platform that lowered the rover on cables. Car-sized at 900 kg, Curiosity is a rolling laboratory with 17 cameras and 10 science instruments. It has confirmed ancient Mars was habitable, detecting organic molecules, methane fluctuations, and a complex lake environment that existed billions of years ago in Gale Crater.",
+      'Curiosity rover landed in Gale Crater on August 6, 2012 using an entirely new "sky crane" descent system — a rocket-powered hover platform that lowered the rover on cables. Car-sized at 900 kg, Curiosity is a rolling laboratory with 17 cameras and 10 science instruments. It has confirmed ancient Mars was habitable, detecting organic molecules, methane fluctuations, and a complex lake environment that existed billions of years ago in Gale Crater.',
     highlights: [
       'Confirmed ancient habitable environment in Gale Crater',
       'Detected complex organic molecules in mudstone',

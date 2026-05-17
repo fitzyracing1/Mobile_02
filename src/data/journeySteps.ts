@@ -56,7 +56,7 @@ export const journeySteps: JourneyStep[] = [
     title: 'Entry, Descent & Landing',
     subtitle: '"Seven Minutes of Terror"',
     description:
-      "Mars EDL is one of the most challenging feats in spaceflight. The spacecraft enters the thin Martian atmosphere at ~20,000 km/h and must slow to zero in about 7 minutes — too fast for parachutes alone, too slow for pure engine braking to be efficient. Engineers use a sequence of systems: a heat shield to shed 99% of velocity through aerodynamic friction, a supersonic parachute to slow to ~400 km/h, then rockets for final descent. For heavy vehicles like Starship, the entire descent is powered. The '7 minutes of terror' refers to the time between atmospheric entry and landing — during which the spacecraft must autonomously handle everything, as the communication delay makes real-time intervention impossible.",
+      'Mars EDL is one of the most challenging feats in spaceflight. The spacecraft enters the thin Martian atmosphere at ~20,000 km/h and must slow to zero in about 7 minutes — too fast for parachutes alone, too slow for pure engine braking to be efficient. Engineers use a sequence of systems: a heat shield to shed 99% of velocity through aerodynamic friction, a supersonic parachute to slow to ~400 km/h, then rockets for final descent. For heavy vehicles like Starship, the entire descent is powered. The "7 minutes of terror" refers to the time between atmospheric entry and landing — during which the spacecraft must autonomously handle everything, as the communication delay makes real-time intervention impossible.',
     keyFacts: [
       { label: 'Entry speed', value: '~20,000 km/h' },
       { label: 'Peak heating', value: '~2,100°C on heat shield' },

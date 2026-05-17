@@ -1,5 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { theme } from '../theme';
@@ -8,11 +14,20 @@ import { FactCard } from '../components/FactCard';
 import { MarsFact } from '../types';
 
 type Category = 'All' | 'Atmosphere' | 'Geography' | 'Moons' | 'Comparison';
+
 const CATEGORIES: Category[] = ['All', 'Atmosphere', 'Geography', 'Moons', 'Comparison'];
-const CATEGORY_ICONS: Record<Category, string> = { All: '🔭', Atmosphere: '💨', Geography: '🗺️', Moons: '🌑', Comparison: '⚖️' };
+
+const CATEGORY_ICONS: Record<Category, string> = {
+  All: '🔭',
+  Atmosphere: '💨',
+  Geography: '🗺️',
+  Moons: '🌑',
+  Comparison: '⚖️',
+};
+
 const CATEGORY_DESCRIPTIONS: Record<Category, string> = {
   All: 'Everything you need to know about the Red Planet.',
-  Atmosphere: 'Mars\'s thin, cold, CO₂-rich atmosphere — hostile but navigable.',
+  Atmosphere: "Mars's thin, cold, CO₂-rich atmosphere — hostile but navigable.",
   Geography: 'From the tallest volcano to the deepest canyon — Mars is extreme.',
   Moons: 'Phobos and Deimos — two tiny captured asteroids orbiting Mars.',
   Comparison: 'How Mars stacks up against our home planet.',
@@ -20,6 +35,7 @@ const CATEGORY_DESCRIPTIONS: Record<Category, string> = {
 
 export default function FactsScreen() {
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
+
   const filteredFacts = useMemo<MarsFact[]>(() => {
     if (selectedCategory === 'All') return marsFacts;
     return marsFacts.filter((f) => f.category === selectedCategory);
@@ -31,16 +47,25 @@ export default function FactsScreen() {
         <LinearGradient colors={['#0A1A30', theme.colors.background]} style={styles.header}>
           <Text style={styles.eyebrow}>THE RED PLANET</Text>
           <Text style={styles.title}>Mars Facts</Text>
-          <Text style={styles.subtitle}>Tap any card to flip it and reveal the full story.</Text>
+          <Text style={styles.subtitle}>
+            Tap any card to flip it and reveal the full story. Swipe through categories to explore.
+          </Text>
         </LinearGradient>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryScroll} style={styles.categoryScrollContainer}>
           {CATEGORIES.map((cat) => {
             const isActive = cat === selectedCategory;
             return (
-              <TouchableOpacity key={cat} onPress={() => setSelectedCategory(cat)} style={[styles.categoryTab, isActive && styles.categoryTabActive]} activeOpacity={0.75}>
+              <TouchableOpacity
+                key={cat}
+                onPress={() => setSelectedCategory(cat)}
+                style={[styles.categoryTab, isActive && styles.categoryTabActive]}
+                activeOpacity={0.75}
+              >
                 <Text style={styles.categoryIcon}>{CATEGORY_ICONS[cat]}</Text>
-                <Text style={[styles.categoryTabText, isActive && styles.categoryTabTextActive]}>{cat}</Text>
+                <Text style={[styles.categoryTabText, isActive && styles.categoryTabTextActive]}>
+                  {cat}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -57,18 +82,36 @@ export default function FactsScreen() {
         </View>
 
         <View style={styles.factsContainer}>
-          {filteredFacts.map((fact) => (<FactCard key={fact.id} fact={fact} />))}
+          {filteredFacts.map((fact) => (
+            <FactCard key={fact.id} fact={fact} />
+          ))}
         </View>
 
         <View style={styles.infoBox}>
           <Text style={styles.infoBoxTitle}>About These Facts</Text>
-          <Text style={styles.infoBoxText}>Data sourced from NASA, ESA, and peer-reviewed planetary science publications. Mars distance calculations use real orbital mechanics based on Keplerian elements. Mission dates represent best current estimates as of May 2026 and are subject to revision.</Text>
+          <Text style={styles.infoBoxText}>
+            Data sourced from NASA, ESA, and peer-reviewed planetary science publications.
+            Mars distance calculations use real orbital mechanics based on Keplerian
+            elements. Mission dates represent best current estimates as of May 2026 and
+            are subject to revision.
+          </Text>
         </View>
 
         <View style={styles.comparisonSection}>
           <Text style={styles.compTitle}>Mars vs Earth — At a Glance</Text>
           <View style={styles.compTable}>
-            {[{label:'Diameter',earth:'12,742 km',mars:'6,779 km'},{label:'Mass',earth:'1.00 Earth',mars:'0.107 Earth'},{label:'Gravity',earth:'9.81 m/s²',mars:'3.72 m/s²'},{label:'Day length',earth:'24h 0m',mars:'24h 37m'},{label:'Year length',earth:'365.25 days',mars:'686.97 days'},{label:'Avg temperature',earth:'+15°C',mars:'−60°C'},{label:'Atmosphere',earth:'N₂/O₂',mars:'95% CO₂'},{label:'Atm. pressure',earth:'101,325 Pa',mars:'~610 Pa'},{label:'Moons',earth:'1 (Luna)',mars:'2 (Phobos, Deimos)'},{label:'Sun distance',earth:'1.00 AU',mars:'1.52 AU'}].map((row, i) => (
+            {[
+              { label: 'Diameter', earth: '12,742 km', mars: '6,779 km' },
+              { label: 'Mass', earth: '1.00 Earth', mars: '0.107 Earth' },
+              { label: 'Gravity', earth: '9.81 m/s²', mars: '3.72 m/s²' },
+              { label: 'Day length', earth: '24h 0m', mars: '24h 37m' },
+              { label: 'Year length', earth: '365.25 days', mars: '686.97 days' },
+              { label: 'Avg temperature', earth: '+15°C', mars: '−60°C' },
+              { label: 'Atmosphere', earth: 'N₂/O₂', mars: '95% CO₂' },
+              { label: 'Atm. pressure', earth: '101,325 Pa', mars: '~610 Pa' },
+              { label: 'Moons', earth: '1 (Luna)', mars: '2 (Phobos, Deimos)' },
+              { label: 'Sun distance', earth: '1.00 AU', mars: '1.52 AU' },
+            ].map((row, i) => (
               <View key={i} style={[styles.compRow, i % 2 === 0 && styles.compRowAlt]}>
                 <Text style={styles.compLabel}>{row.label}</Text>
                 <Text style={styles.compEarth}>{row.earth}</Text>
@@ -77,8 +120,14 @@ export default function FactsScreen() {
             ))}
           </View>
           <View style={styles.compLegend}>
-            <View style={styles.compLegendItem}><View style={[styles.compDot, { backgroundColor: theme.colors.info }]} /><Text style={styles.compLegendText}>Earth</Text></View>
-            <View style={styles.compLegendItem}><View style={[styles.compDot, { backgroundColor: theme.colors.accent }]} /><Text style={styles.compLegendText}>Mars</Text></View>
+            <View style={styles.compLegendItem}>
+              <View style={[styles.compDot, { backgroundColor: theme.colors.info }]} />
+              <Text style={styles.compLegendText}>Earth</Text>
+            </View>
+            <View style={styles.compLegendItem}>
+              <View style={[styles.compDot, { backgroundColor: theme.colors.accent }]} />
+              <Text style={styles.compLegendText}>Mars</Text>
+            </View>
           </View>
         </View>
       </ScrollView>
