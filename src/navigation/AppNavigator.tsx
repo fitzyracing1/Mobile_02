@@ -1,63 +1,15 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, Platform } from 'react-native';
-import { RootStackParamList, MainTabParamList } from '../types';
+import { MainTabParamList } from '../types';
 import HomeScreen from '../screens/HomeScreen';
-import HistoryScreen from '../screens/HistoryScreen';
-import ActiveRunScreen from '../screens/ActiveRunScreen';
-import RunDetailScreen from '../screens/RunDetailScreen';
-import { COLORS, FONT_SIZES } from '../theme';
+import JourneyScreen from '../screens/JourneyScreen';
+import MissionsScreen from '../screens/MissionsScreen';
+import FactsScreen from '../screens/FactsScreen';
+import { theme } from '../theme';
 
-const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
-
-function MainTabs() {
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: COLORS.surface,
-          borderTopColor: COLORS.border,
-          borderTopWidth: 1,
-          paddingBottom: Platform.OS === 'ios' ? 0 : 8,
-          paddingTop: 8,
-          height: Platform.OS === 'ios' ? 84 : 64,
-        },
-        tabBarActiveTintColor: COLORS.accent,
-        tabBarInactiveTintColor: COLORS.textTertiary,
-        tabBarLabelStyle: {
-          fontSize: FONT_SIZES.xs,
-          fontWeight: '600',
-          marginBottom: Platform.OS === 'ios' ? 0 : 4,
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size ?? 22, color }}>🏠</Text>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="History"
-        component={HistoryScreen}
-        options={{
-          tabBarLabel: 'History',
-          tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size ?? 22, color }}>📋</Text>
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
-}
 
 export default function AppNavigator() {
   return (
@@ -65,33 +17,76 @@ export default function AppNavigator() {
       theme={{
         dark: true,
         colors: {
-          primary: COLORS.accent,
-          background: COLORS.background,
-          card: COLORS.surface,
-          text: COLORS.textPrimary,
-          border: COLORS.border,
-          notification: COLORS.accent,
+          primary: theme.colors.accent,
+          background: theme.colors.background,
+          card: theme.colors.backgroundSecondary,
+          text: theme.colors.textPrimary,
+          border: theme.colors.borderLight,
+          notification: theme.colors.accent,
         },
       }}
     >
-      <Stack.Navigator
+      <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          cardStyle: { backgroundColor: COLORS.background },
-          presentation: 'card',
+          tabBarStyle: {
+            backgroundColor: theme.colors.backgroundSecondary,
+            borderTopColor: theme.colors.borderLight,
+            borderTopWidth: 1,
+            paddingBottom: Platform.OS === 'ios' ? 0 : 8,
+            paddingTop: 8,
+            height: Platform.OS === 'ios' ? 84 : 64,
+          },
+          tabBarActiveTintColor: theme.colors.accent,
+          tabBarInactiveTintColor: theme.colors.textMuted,
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontWeight: '600',
+            marginBottom: Platform.OS === 'ios' ? 0 : 4,
+          },
         }}
       >
-        <Stack.Screen name="MainTabs" component={MainTabs} />
-        <Stack.Screen
-          name="ActiveRun"
-          component={ActiveRunScreen}
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
           options={{
-            presentation: 'modal',
-            gestureEnabled: false,
+            tabBarLabel: 'Overview',
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ fontSize: size ?? 22, color }}>🔴</Text>
+            ),
           }}
         />
-        <Stack.Screen name="RunDetail" component={RunDetailScreen} />
-      </Stack.Navigator>
+        <Tab.Screen
+          name="Journey"
+          component={JourneyScreen}
+          options={{
+            tabBarLabel: 'Journey',
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ fontSize: size ?? 22, color }}>🚀</Text>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Missions"
+          component={MissionsScreen}
+          options={{
+            tabBarLabel: 'Missions',
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ fontSize: size ?? 22, color }}>🛸</Text>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Facts"
+          component={FactsScreen}
+          options={{
+            tabBarLabel: 'Mars Facts',
+            tabBarIcon: ({ color, size }) => (
+              <Text style={{ fontSize: size ?? 22, color }}>📡</Text>
+            ),
+          }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
