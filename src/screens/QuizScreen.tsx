@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Animated,
   Dimensions,
   ScrollView,
+  Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -25,7 +26,9 @@ interface QuizQuestion {
   correctIndex: number;
 }
 
-const QUESTIONS: QuizQuestion[] = [
+// Full 20-question bank
+const QUESTION_BANK: QuizQuestion[] = [
+  // --- Original 10 ---
   {
     question: 'What is the tallest volcano on Mars?',
     choices: ['Arsia Mons', 'Olympus Mons', 'Pavonis Mons', 'Ascraeus Mons'],
@@ -37,7 +40,7 @@ const QUESTIONS: QuizQuestion[] = [
     correctIndex: 2,
   },
   {
-    question: 'What percentage of Mars\'s atmosphere is CO₂?',
+    question: "What percentage of Mars's atmosphere is CO₂?",
     choices: ['78%', '21%', '50%', '95%'],
     correctIndex: 3,
   },
@@ -47,7 +50,7 @@ const QUESTIONS: QuizQuestion[] = [
     correctIndex: 1,
   },
   {
-    question: 'What is the name of Mars\'s larger moon?',
+    question: "What is the name of Mars's larger moon?",
     choices: ['Deimos', 'Europa', 'Phobos', 'Titan'],
     correctIndex: 2,
   },
@@ -57,7 +60,7 @@ const QUESTIONS: QuizQuestion[] = [
     correctIndex: 2,
   },
   {
-    question: 'What is Mars\'s gravity as a percentage of Earth\'s?',
+    question: "What is Mars's gravity as a percentage of Earth's?",
     choices: ['25%', '38%', '50%', '62%'],
     correctIndex: 1,
   },
@@ -76,9 +79,82 @@ const QUESTIONS: QuizQuestion[] = [
     choices: ['3 km', '5 km', '7 km', '10 km'],
     correctIndex: 2,
   },
+
+  // --- New 10 ---
+  {
+    question: "What is Mars's average distance from the Sun in AU?",
+    choices: ['0.72 AU', '1.00 AU', '1.52 AU', '2.20 AU'],
+    correctIndex: 2,
+  },
+  {
+    question: 'Which spacecraft performed the first successful Mars landing?',
+    choices: ['Mariner 4', 'Viking 1', 'Pathfinder', 'Mars 2'],
+    correctIndex: 1,
+  },
+  {
+    question: 'What does "EDL" stand for in Mars missions?',
+    choices: [
+      'Engine Descent Landing',
+      'Entry, Descent and Landing',
+      'Extended Duration Lander',
+      'Exterior Deceleration Layer',
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "How does Mars's surface area compare to Earth's total land area?",
+    choices: [
+      "Half of Earth's land area",
+      "Roughly equal (~144 million km²)",
+      "Twice Earth's land area",
+      "A quarter of Earth's land area",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: 'What is the largest canyon system on Mars?',
+    choices: ['Eos Chasma', 'Coprates Chasma', 'Valles Marineris', 'Hellas Basin'],
+    correctIndex: 2,
+  },
+  {
+    question: 'Which space agency operates the Tianwen-1 Mars mission?',
+    choices: ['NASA', 'ESA', 'ISRO', 'CNSA'],
+    correctIndex: 3,
+  },
+  {
+    question: 'How many moons does Mars have?',
+    choices: ['0', '1', '2', '4'],
+    correctIndex: 2,
+  },
+  {
+    question: "What color is Mars's sky during the day?",
+    choices: ['Deep blue', 'Pale white', 'Pinkish-tan (butterscotch)', 'Orange-red'],
+    correctIndex: 2,
+  },
+  {
+    question: 'What is the Martian equivalent of an Earth day called?',
+    choices: ['Mars-day', 'Sol', 'Areday', 'Terraday'],
+    correctIndex: 1,
+  },
+  {
+    question: 'What year did the Curiosity rover land on Mars?',
+    choices: ['2008', '2010', '2012', '2014'],
+    correctIndex: 2,
+  },
 ];
 
+const QUESTIONS_PER_GAME = 10;
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'];
+
+/** Fisher-Yates shuffle and slice helper */
+function getRandomQuestions(bank: QuizQuestion[], count: number): QuizQuestion[] {
+  const copy = [...bank];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, count);
+}
 
 function getRating(score: number): string {
   if (score <= 3) return 'Keep exploring! 🔴';
@@ -89,15 +165,27 @@ function getRating(score: number): string {
 
 export default function QuizScreen() {
   const navigation = useNavigation();
+
+  // gameKey increments on retry to trigger useMemo re-randomization
+  const [gameKey, setGameKey] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
+  // Randomly selected questions for this game session
+  const questions = useMemo(
+    () => getRandomQuestions(QUESTION_BANK, QUESTIONS_PER_GAME),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [gameKey],
+  );
+
+  // Slide animation
   const slideAnim = useRef(new Animated.Value(0)).current;
 
+  // Per-choice color flash animations (4 choices max)
   const choiceColors = useRef(
-    QUESTIONS[0].choices.map(() => new Animated.Value(0))
+    [0, 1, 2, 3].map(() => new Animated.Value(0))
   ).current;
 
   const resetChoiceAnims = () => {
@@ -107,7 +195,7 @@ export default function QuizScreen() {
   const handleAnswer = (index: number) => {
     if (selectedIndex !== null) return;
 
-    const question = QUESTIONS[currentQuestion];
+    const question = questions[currentQuestion];
     const isCorrect = index === question.correctIndex;
 
     setSelectedIndex(index);
@@ -115,6 +203,7 @@ export default function QuizScreen() {
       setScore((s) => s + 1);
     }
 
+    // Flash the chosen answer and correct answer
     const flashTargets: { anim: Animated.Value; value: number }[] = [];
     flashTargets.push({ anim: choiceColors[index], value: isCorrect ? 1 : 2 });
     if (!isCorrect) {
@@ -129,23 +218,27 @@ export default function QuizScreen() {
       }).start();
     });
 
+    // After a brief pause, slide to next question or finish
     setTimeout(() => {
       const next = currentQuestion + 1;
-      if (next >= QUESTIONS.length) {
+      if (next >= questions.length) {
         setIsFinished(true);
         return;
       }
 
+      // Slide out current question to the left
       Animated.timing(slideAnim, {
         toValue: -SCREEN_WIDTH,
         duration: 300,
         useNativeDriver: true,
       }).start(() => {
+        // Reset state for next question
         slideAnim.setValue(SCREEN_WIDTH);
         resetChoiceAnims();
         setSelectedIndex(null);
         setCurrentQuestion(next);
 
+        // Slide in from the right
         Animated.timing(slideAnim, {
           toValue: 0,
           duration: 300,
@@ -162,13 +255,29 @@ export default function QuizScreen() {
     setSelectedIndex(null);
     setScore(0);
     setIsFinished(false);
+    setGameKey((k) => k + 1); // triggers new random question selection
   };
 
   const handleBackToFacts = () => {
     navigation.goBack();
   };
 
-  const progressPercent = ((currentQuestion + (selectedIndex !== null ? 1 : 0)) / QUESTIONS.length) * 100;
+  const handleShare = async () => {
+    const rating = getRating(score);
+    try {
+      await Share.share({
+        message:
+          '🔴 Road to Mars Quiz\n' +
+          `I scored ${score}/10 — ${rating}\n\n` +
+          "Can you beat me? Download the app and explore humanity's journey to Mars!",
+      });
+    } catch {
+      // User cancelled or share failed — no-op
+    }
+  };
+
+  const progressPercent =
+    ((currentQuestion + (selectedIndex !== null ? 1 : 0)) / questions.length) * 100;
 
   if (isFinished) {
     const rating = getRating(score);
@@ -197,7 +306,7 @@ export default function QuizScreen() {
           <View style={styles.resultsDivider} />
 
           <Text style={styles.resultsBreakdownTitle}>Question Breakdown</Text>
-          {QUESTIONS.map((q, i) => (
+          {questions.map((q, i) => (
             <View key={i} style={styles.breakdownRow}>
               <Text style={styles.breakdownNum}>{i + 1}</Text>
               <Text style={styles.breakdownQ} numberOfLines={2}>{q.question}</Text>
@@ -224,6 +333,14 @@ export default function QuizScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
+              style={styles.shareButton}
+              onPress={handleShare}
+              activeOpacity={0.75}
+            >
+              <Text style={styles.shareText}>📤 Share Score</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={styles.backButton}
               onPress={handleBackToFacts}
               activeOpacity={0.75}
@@ -236,7 +353,7 @@ export default function QuizScreen() {
     );
   }
 
-  const question = QUESTIONS[currentQuestion];
+  const question = questions[currentQuestion];
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -245,6 +362,7 @@ export default function QuizScreen() {
         style={StyleSheet.absoluteFill}
       />
 
+      {/* Header with progress */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={handleBackToFacts}
@@ -255,7 +373,7 @@ export default function QuizScreen() {
         </TouchableOpacity>
         <View style={styles.progressLabelRow}>
           <Text style={styles.progressLabel}>
-            Question {currentQuestion + 1} of {QUESTIONS.length}
+            Question {currentQuestion + 1} of {questions.length}
           </Text>
           <Text style={styles.scoreInProgress}>Score: {score}</Text>
         </View>
@@ -269,6 +387,7 @@ export default function QuizScreen() {
         </View>
       </View>
 
+      {/* Question + Choices */}
       <Animated.View
         style={[
           styles.questionContainer,
@@ -358,6 +477,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
+
+  // Header
   header: {
     paddingHorizontal: theme.spacing.md,
     paddingTop: theme.spacing.sm,
@@ -399,6 +520,8 @@ const styles = StyleSheet.create({
     backgroundColor: ACCENT,
     borderRadius: theme.borderRadius.full,
   },
+
+  // Question
   questionContainer: {
     flex: 1,
     paddingHorizontal: theme.spacing.md,
@@ -423,6 +546,8 @@ const styles = StyleSheet.create({
     color: theme.colors.textPrimary,
     lineHeight: 28,
   },
+
+  // Choices
   choicesContainer: {
     gap: theme.spacing.sm,
   },
@@ -450,6 +575,8 @@ const styles = StyleSheet.create({
     color: theme.colors.textPrimary,
     flex: 1,
   },
+
+  // Results screen
   resultsScroll: {
     alignItems: 'center',
     paddingHorizontal: theme.spacing.lg,
@@ -557,6 +684,19 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: theme.colors.white,
     letterSpacing: 0.5,
+  },
+  shareButton: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderRadius: theme.borderRadius.full,
+    borderWidth: 1,
+    borderColor: ACCENT + '88',
+    backgroundColor: theme.colors.backgroundCard,
+  },
+  shareText: {
+    ...theme.typography.h3,
+    color: ACCENT,
   },
   backButton: {
     width: '100%',
