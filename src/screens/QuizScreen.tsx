@@ -26,9 +26,7 @@ interface QuizQuestion {
   correctIndex: number;
 }
 
-// Full 20-question bank
 const QUESTION_BANK: QuizQuestion[] = [
-  // --- Original 10 ---
   {
     question: 'What is the tallest volcano on Mars?',
     choices: ['Arsia Mons', 'Olympus Mons', 'Pavonis Mons', 'Ascraeus Mons'],
@@ -79,8 +77,6 @@ const QUESTION_BANK: QuizQuestion[] = [
     choices: ['3 km', '5 km', '7 km', '10 km'],
     correctIndex: 2,
   },
-
-  // --- New 10 ---
   {
     question: "What is Mars's average distance from the Sun in AU?",
     choices: ['0.72 AU', '1.00 AU', '1.52 AU', '2.20 AU'],
@@ -146,7 +142,6 @@ const QUESTION_BANK: QuizQuestion[] = [
 const QUESTIONS_PER_GAME = 10;
 const CHOICE_LABELS = ['A', 'B', 'C', 'D'];
 
-/** Fisher-Yates shuffle and slice helper */
 function getRandomQuestions(bank: QuizQuestion[], count: number): QuizQuestion[] {
   const copy = [...bank];
   for (let i = copy.length - 1; i > 0; i--) {
@@ -166,24 +161,20 @@ function getRating(score: number): string {
 export default function QuizScreen() {
   const navigation = useNavigation();
 
-  // gameKey increments on retry to trigger useMemo re-randomization
   const [gameKey, setGameKey] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
-  // Randomly selected questions for this game session
   const questions = useMemo(
     () => getRandomQuestions(QUESTION_BANK, QUESTIONS_PER_GAME),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [gameKey],
   );
 
-  // Slide animation
   const slideAnim = useRef(new Animated.Value(0)).current;
 
-  // Per-choice color flash animations (4 choices max)
   const choiceColors = useRef(
     [0, 1, 2, 3].map(() => new Animated.Value(0))
   ).current;
@@ -199,11 +190,8 @@ export default function QuizScreen() {
     const isCorrect = index === question.correctIndex;
 
     setSelectedIndex(index);
-    if (isCorrect) {
-      setScore((s) => s + 1);
-    }
+    if (isCorrect) setScore((s) => s + 1);
 
-    // Flash the chosen answer and correct answer
     const flashTargets: { anim: Animated.Value; value: number }[] = [];
     flashTargets.push({ anim: choiceColors[index], value: isCorrect ? 1 : 2 });
     if (!isCorrect) {
@@ -211,14 +199,9 @@ export default function QuizScreen() {
     }
 
     flashTargets.forEach(({ anim, value }) => {
-      Animated.timing(anim, {
-        toValue: value,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
+      Animated.timing(anim, { toValue: value, duration: 200, useNativeDriver: false }).start();
     });
 
-    // After a brief pause, slide to next question or finish
     setTimeout(() => {
       const next = currentQuestion + 1;
       if (next >= questions.length) {
@@ -226,24 +209,12 @@ export default function QuizScreen() {
         return;
       }
 
-      // Slide out current question to the left
-      Animated.timing(slideAnim, {
-        toValue: -SCREEN_WIDTH,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        // Reset state for next question
+      Animated.timing(slideAnim, { toValue: -SCREEN_WIDTH, duration: 300, useNativeDriver: true }).start(() => {
         slideAnim.setValue(SCREEN_WIDTH);
         resetChoiceAnims();
         setSelectedIndex(null);
         setCurrentQuestion(next);
-
-        // Slide in from the right
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
+        Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }).start();
       });
     }, 900);
   };
@@ -255,24 +226,22 @@ export default function QuizScreen() {
     setSelectedIndex(null);
     setScore(0);
     setIsFinished(false);
-    setGameKey((k) => k + 1); // triggers new random question selection
+    setGameKey((k) => k + 1);
   };
 
-  const handleBackToFacts = () => {
-    navigation.goBack();
-  };
+  const handleBackToFacts = () => navigation.goBack();
 
   const handleShare = async () => {
     const rating = getRating(score);
     try {
       await Share.share({
         message:
-          '🔴 Road to Mars Quiz\n' +
+          `🔴 Road to Mars Quiz\n` +
           `I scored ${score}/10 — ${rating}\n\n` +
-          "Can you beat me? Download the app and explore humanity's journey to Mars!",
+          `Can you beat me? Download the app and explore humanity's journey to Mars!`,
       });
     } catch {
-      // User cancelled or share failed — no-op
+      // User cancelled or share failed
     }
   };
 
@@ -283,14 +252,8 @@ export default function QuizScreen() {
     const rating = getRating(score);
     return (
       <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-        <LinearGradient
-          colors={['#0A1A30', theme.colors.background]}
-          style={StyleSheet.absoluteFill}
-        />
-        <ScrollView
-          contentContainerStyle={styles.resultsScroll}
-          showsVerticalScrollIndicator={false}
-        >
+        <LinearGradient colors={['#0A1A30', theme.colors.background]} style={StyleSheet.absoluteFill} />
+        <ScrollView contentContainerStyle={styles.resultsScroll} showsVerticalScrollIndicator={false}>
           <Text style={styles.resultsEmoji}>
             {score === 10 ? '🌌' : score >= 7 ? '🛸' : score >= 4 ? '🚀' : '🔴'}
           </Text>
@@ -310,41 +273,26 @@ export default function QuizScreen() {
             <View key={i} style={styles.breakdownRow}>
               <Text style={styles.breakdownNum}>{i + 1}</Text>
               <Text style={styles.breakdownQ} numberOfLines={2}>{q.question}</Text>
-              <Text style={styles.breakdownAnswer}>
-                {CHOICE_LABELS[q.correctIndex]}
-              </Text>
+              <Text style={styles.breakdownAnswer}>{CHOICE_LABELS[q.correctIndex]}</Text>
             </View>
           ))}
 
           <View style={styles.resultsActions}>
-            <TouchableOpacity
-              style={styles.retryButton}
-              onPress={handleRetry}
-              activeOpacity={0.85}
-            >
+            <TouchableOpacity style={styles.retryButton} onPress={handleRetry} activeOpacity={0.85}>
               <LinearGradient
                 colors={[ACCENT, theme.colors.accentSecondary]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
                 style={styles.retryGradient}
               >
                 <Text style={styles.retryText}>Try Again</Text>
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.shareButton}
-              onPress={handleShare}
-              activeOpacity={0.75}
-            >
+            <TouchableOpacity style={styles.shareButton} onPress={handleShare} activeOpacity={0.75}>
               <Text style={styles.shareText}>📤 Share Score</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={handleBackToFacts}
-              activeOpacity={0.75}
-            >
+            <TouchableOpacity style={styles.backButton} onPress={handleBackToFacts} activeOpacity={0.75}>
               <Text style={styles.backText}>← Back to Facts</Text>
             </TouchableOpacity>
           </View>
@@ -357,43 +305,22 @@ export default function QuizScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <LinearGradient
-        colors={['#0A1A30', theme.colors.background]}
-        style={StyleSheet.absoluteFill}
-      />
+      <LinearGradient colors={['#0A1A30', theme.colors.background]} style={StyleSheet.absoluteFill} />
 
-      {/* Header with progress */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={handleBackToFacts}
-          style={styles.closeButton}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity onPress={handleBackToFacts} style={styles.closeButton} activeOpacity={0.7}>
           <Text style={styles.closeText}>✕</Text>
         </TouchableOpacity>
         <View style={styles.progressLabelRow}>
-          <Text style={styles.progressLabel}>
-            Question {currentQuestion + 1} of {questions.length}
-          </Text>
+          <Text style={styles.progressLabel}>Question {currentQuestion + 1} of {questions.length}</Text>
           <Text style={styles.scoreInProgress}>Score: {score}</Text>
         </View>
         <View style={styles.progressBarTrack}>
-          <Animated.View
-            style={[
-              styles.progressBarFill,
-              { width: `${progressPercent}%` },
-            ]}
-          />
+          <Animated.View style={[styles.progressBarFill, { width: `${progressPercent}%` }]} />
         </View>
       </View>
 
-      {/* Question + Choices */}
-      <Animated.View
-        style={[
-          styles.questionContainer,
-          { transform: [{ translateX: slideAnim }] },
-        ]}
-      >
+      <Animated.View style={[styles.questionContainer, { transform: [{ translateX: slideAnim }] }]}>
         <View style={styles.questionCard}>
           <Text style={styles.questionNumber}>Q{currentQuestion + 1}</Text>
           <Text style={styles.questionText}>{question.question}</Text>
@@ -402,41 +329,21 @@ export default function QuizScreen() {
         <View style={styles.choicesContainer}>
           {question.choices.map((choice, index) => {
             const colorAnim = choiceColors[index];
-
             const bgColor = colorAnim.interpolate({
               inputRange: [0, 1, 2],
-              outputRange: [
-                theme.colors.backgroundCard,
-                CORRECT_COLOR + '33',
-                WRONG_COLOR + '33',
-              ],
+              outputRange: [theme.colors.backgroundCard, CORRECT_COLOR + '33', WRONG_COLOR + '33'],
             });
-
             const borderColor = colorAnim.interpolate({
               inputRange: [0, 1, 2],
-              outputRange: [
-                theme.colors.borderLight,
-                CORRECT_COLOR,
-                WRONG_COLOR,
-              ],
+              outputRange: [theme.colors.borderLight, CORRECT_COLOR, WRONG_COLOR],
             });
-
             const labelBg = colorAnim.interpolate({
               inputRange: [0, 1, 2],
-              outputRange: [
-                theme.colors.backgroundSecondary,
-                CORRECT_COLOR,
-                WRONG_COLOR,
-              ],
+              outputRange: [theme.colors.backgroundSecondary, CORRECT_COLOR, WRONG_COLOR],
             });
-
             const labelColor = colorAnim.interpolate({
               inputRange: [0, 1, 2],
-              outputRange: [
-                theme.colors.textSecondary,
-                '#FFFFFF',
-                '#FFFFFF',
-              ],
+              outputRange: [theme.colors.textSecondary, '#FFFFFF', '#FFFFFF'],
             });
 
             return (
@@ -446,18 +353,9 @@ export default function QuizScreen() {
                 activeOpacity={selectedIndex !== null ? 1 : 0.75}
                 disabled={selectedIndex !== null}
               >
-                <Animated.View
-                  style={[
-                    styles.choiceRow,
-                    { backgroundColor: bgColor, borderColor },
-                  ]}
-                >
-                  <Animated.View
-                    style={[styles.choiceLabel, { backgroundColor: labelBg }]}
-                  >
-                    <Animated.Text
-                      style={[styles.choiceLabelText, { color: labelColor }]}
-                    >
+                <Animated.View style={[styles.choiceRow, { backgroundColor: bgColor, borderColor }]}>
+                  <Animated.View style={[styles.choiceLabel, { backgroundColor: labelBg }]}>
+                    <Animated.Text style={[styles.choiceLabelText, { color: labelColor }]}>
                       {CHOICE_LABELS[index]}
                     </Animated.Text>
                   </Animated.View>
@@ -473,242 +371,44 @@ export default function QuizScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-
-  // Header
-  header: {
-    paddingHorizontal: theme.spacing.md,
-    paddingTop: theme.spacing.sm,
-    paddingBottom: theme.spacing.md,
-    gap: theme.spacing.sm,
-  },
-  closeButton: {
-    alignSelf: 'flex-end',
-    padding: 6,
-  },
-  closeText: {
-    fontSize: 18,
-    color: theme.colors.textMuted,
-    fontWeight: '600',
-  },
-  progressLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  progressLabel: {
-    ...theme.typography.label,
-    color: theme.colors.textSecondary,
-    letterSpacing: 0.5,
-  },
-  scoreInProgress: {
-    ...theme.typography.label,
-    color: ACCENT,
-    letterSpacing: 0.5,
-  },
-  progressBarTrack: {
-    height: 4,
-    backgroundColor: theme.colors.borderLight,
-    borderRadius: theme.borderRadius.full,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: ACCENT,
-    borderRadius: theme.borderRadius.full,
-  },
-
-  // Question
-  questionContainer: {
-    flex: 1,
-    paddingHorizontal: theme.spacing.md,
-  },
-  questionCard: {
-    backgroundColor: theme.colors.backgroundCard,
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.borderLight,
-    padding: theme.spacing.lg,
-    marginBottom: theme.spacing.lg,
-  },
-  questionNumber: {
-    ...theme.typography.label,
-    color: ACCENT,
-    letterSpacing: 1.5,
-    marginBottom: theme.spacing.sm,
-  },
-  questionText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: theme.colors.textPrimary,
-    lineHeight: 28,
-  },
-
-  // Choices
-  choicesContainer: {
-    gap: theme.spacing.sm,
-  },
-  choiceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: theme.borderRadius.md,
-    borderWidth: 1.5,
-    padding: theme.spacing.md,
-    gap: theme.spacing.md,
-  },
-  choiceLabel: {
-    width: 32,
-    height: 32,
-    borderRadius: theme.borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  choiceLabelText: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  choiceText: {
-    ...theme.typography.body,
-    color: theme.colors.textPrimary,
-    flex: 1,
-  },
-
-  // Results screen
-  resultsScroll: {
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.xxl,
-  },
-  resultsEmoji: {
-    fontSize: 80,
-    marginBottom: theme.spacing.md,
-  },
-  resultsTitle: {
-    ...theme.typography.hero,
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.lg,
-  },
-  scoreBox: {
-    alignItems: 'center',
-    backgroundColor: theme.colors.backgroundCard,
-    borderRadius: theme.borderRadius.xl,
-    borderWidth: 1,
-    borderColor: ACCENT + '55',
-    paddingHorizontal: theme.spacing.xxl,
-    paddingVertical: theme.spacing.lg,
-    marginBottom: theme.spacing.md,
-  },
-  scoreNumber: {
-    fontSize: 56,
-    fontWeight: '900',
-    color: ACCENT,
-    lineHeight: 64,
-  },
-  scoreOutOf: {
-    fontSize: 32,
-    fontWeight: '600',
-    color: theme.colors.textSecondary,
-  },
-  scoreLabel: {
-    ...theme.typography.label,
-    color: theme.colors.textSecondary,
-    letterSpacing: 1.5,
-    textTransform: 'uppercase',
-  },
-  ratingText: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.lg,
-    textAlign: 'center',
-  },
-  resultsDivider: {
-    height: 1,
-    backgroundColor: theme.colors.borderLight,
-    width: '100%',
-    marginVertical: theme.spacing.md,
-  },
-  resultsBreakdownTitle: {
-    ...theme.typography.h3,
-    color: theme.colors.textSecondary,
-    alignSelf: 'flex-start',
-    marginBottom: theme.spacing.sm,
-  },
-  breakdownRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.borderLight,
-    gap: theme.spacing.sm,
-  },
-  breakdownNum: {
-    ...theme.typography.label,
-    color: ACCENT,
-    width: 20,
-    textAlign: 'center',
-  },
-  breakdownQ: {
-    ...theme.typography.bodySmall,
-    color: theme.colors.textSecondary,
-    flex: 1,
-  },
-  breakdownAnswer: {
-    ...theme.typography.label,
-    color: CORRECT_COLOR,
-    width: 20,
-    textAlign: 'center',
-  },
-  resultsActions: {
-    width: '100%',
-    marginTop: theme.spacing.xl,
-    gap: theme.spacing.md,
-  },
-  retryButton: {
-    width: '100%',
-    borderRadius: theme.borderRadius.full,
-    overflow: 'hidden',
-  },
-  retryGradient: {
-    paddingVertical: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  retryText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.white,
-    letterSpacing: 0.5,
-  },
-  shareButton: {
-    width: '100%',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.full,
-    borderWidth: 1,
-    borderColor: ACCENT + '88',
-    backgroundColor: theme.colors.backgroundCard,
-  },
-  shareText: {
-    ...theme.typography.h3,
-    color: ACCENT,
-  },
-  backButton: {
-    width: '100%',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderRadius: theme.borderRadius.full,
-    borderWidth: 1,
-    borderColor: theme.colors.borderLight,
-    backgroundColor: theme.colors.backgroundCard,
-  },
-  backText: {
-    ...theme.typography.h3,
-    color: theme.colors.textSecondary,
-  },
+  safeArea: { flex: 1, backgroundColor: theme.colors.background },
+  header: { paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.sm, paddingBottom: theme.spacing.md, gap: theme.spacing.sm },
+  closeButton: { alignSelf: 'flex-end', padding: 6 },
+  closeText: { fontSize: 18, color: theme.colors.textMuted, fontWeight: '600' },
+  progressLabelRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  progressLabel: { ...theme.typography.label, color: theme.colors.textSecondary, letterSpacing: 0.5 },
+  scoreInProgress: { ...theme.typography.label, color: ACCENT, letterSpacing: 0.5 },
+  progressBarTrack: { height: 4, backgroundColor: theme.colors.borderLight, borderRadius: theme.borderRadius.full, overflow: 'hidden' },
+  progressBarFill: { height: '100%', backgroundColor: ACCENT, borderRadius: theme.borderRadius.full },
+  questionContainer: { flex: 1, paddingHorizontal: theme.spacing.md },
+  questionCard: { backgroundColor: theme.colors.backgroundCard, borderRadius: theme.borderRadius.lg, borderWidth: 1, borderColor: theme.colors.borderLight, padding: theme.spacing.lg, marginBottom: theme.spacing.lg },
+  questionNumber: { ...theme.typography.label, color: ACCENT, letterSpacing: 1.5, marginBottom: theme.spacing.sm },
+  questionText: { fontSize: 20, fontWeight: '700', color: theme.colors.textPrimary, lineHeight: 28 },
+  choicesContainer: { gap: theme.spacing.sm },
+  choiceRow: { flexDirection: 'row', alignItems: 'center', borderRadius: theme.borderRadius.md, borderWidth: 1.5, padding: theme.spacing.md, gap: theme.spacing.md },
+  choiceLabel: { width: 32, height: 32, borderRadius: theme.borderRadius.full, alignItems: 'center', justifyContent: 'center' },
+  choiceLabelText: { fontSize: 13, fontWeight: '700' },
+  choiceText: { ...theme.typography.body, color: theme.colors.textPrimary, flex: 1 },
+  resultsScroll: { alignItems: 'center', paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.xl, paddingBottom: theme.spacing.xxl },
+  resultsEmoji: { fontSize: 80, marginBottom: theme.spacing.md },
+  resultsTitle: { ...theme.typography.hero, color: theme.colors.textPrimary, marginBottom: theme.spacing.lg },
+  scoreBox: { alignItems: 'center', backgroundColor: theme.colors.backgroundCard, borderRadius: theme.borderRadius.xl, borderWidth: 1, borderColor: ACCENT + '55', paddingHorizontal: theme.spacing.xxl, paddingVertical: theme.spacing.lg, marginBottom: theme.spacing.md },
+  scoreNumber: { fontSize: 56, fontWeight: '900', color: ACCENT, lineHeight: 64 },
+  scoreOutOf: { fontSize: 32, fontWeight: '600', color: theme.colors.textSecondary },
+  scoreLabel: { ...theme.typography.label, color: theme.colors.textSecondary, letterSpacing: 1.5, textTransform: 'uppercase' },
+  ratingText: { fontSize: 22, fontWeight: '700', color: theme.colors.textPrimary, marginBottom: theme.spacing.lg, textAlign: 'center' },
+  resultsDivider: { height: 1, backgroundColor: theme.colors.borderLight, width: '100%', marginVertical: theme.spacing.md },
+  resultsBreakdownTitle: { ...theme.typography.h3, color: theme.colors.textSecondary, alignSelf: 'flex-start', marginBottom: theme.spacing.sm },
+  breakdownRow: { flexDirection: 'row', alignItems: 'center', width: '100%', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: theme.colors.borderLight, gap: theme.spacing.sm },
+  breakdownNum: { ...theme.typography.label, color: ACCENT, width: 20, textAlign: 'center' },
+  breakdownQ: { ...theme.typography.bodySmall, color: theme.colors.textSecondary, flex: 1 },
+  breakdownAnswer: { ...theme.typography.label, color: CORRECT_COLOR, width: 20, textAlign: 'center' },
+  resultsActions: { width: '100%', marginTop: theme.spacing.xl, gap: theme.spacing.md },
+  retryButton: { width: '100%', borderRadius: theme.borderRadius.full, overflow: 'hidden' },
+  retryGradient: { paddingVertical: 16, alignItems: 'center', justifyContent: 'center' },
+  retryText: { fontSize: 18, fontWeight: '700', color: theme.colors.white, letterSpacing: 0.5 },
+  shareButton: { width: '100%', alignItems: 'center', paddingVertical: 14, borderRadius: theme.borderRadius.full, borderWidth: 1, borderColor: ACCENT + '88', backgroundColor: theme.colors.backgroundCard },
+  shareText: { ...theme.typography.h3, color: ACCENT },
+  backButton: { width: '100%', alignItems: 'center', paddingVertical: 14, borderRadius: theme.borderRadius.full, borderWidth: 1, borderColor: theme.colors.borderLight, backgroundColor: theme.colors.backgroundCard },
+  backText: { ...theme.typography.h3, color: theme.colors.textSecondary },
 });
