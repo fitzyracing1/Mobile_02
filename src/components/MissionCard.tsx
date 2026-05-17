@@ -116,46 +116,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  typeIcon: {
-    fontSize: 22,
-  },
-  headerInfo: {
-    flex: 1,
-  },
-  name: {
-    ...theme.typography.h3,
-    color: theme.colors.textPrimary,
-  },
-  meta: {
-    ...theme.typography.bodySmall,
-    color: theme.colors.textSecondary,
-    marginTop: 2,
-  },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.sm,
-  },
-  badgeText: {
-    ...theme.typography.label,
-    fontSize: 10,
-  },
+  typeIcon: { fontSize: 22 },
+  headerInfo: { flex: 1 },
+  name: { ...theme.typography.h3, color: theme.colors.textPrimary },
+  meta: { ...theme.typography.bodySmall, color: theme.colors.textSecondary, marginTop: 2 },
+  badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: theme.borderRadius.sm },
+  badgeText: { ...theme.typography.label, fontSize: 10 },
   footer: {
     borderTopWidth: 1,
     borderTopColor: theme.colors.borderLight,
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
   },
-  previewText: {
-    ...theme.typography.bodySmall,
-    color: theme.colors.textMuted,
-    lineHeight: 18,
-    marginBottom: 6,
-  },
-  tapLabel: {
-    ...theme.typography.caption,
-    color: theme.colors.accent,
-    textAlign: 'right',
-    letterSpacing: 0.5,
-  },
+  previewText: { ...theme.typography.bodySmall, color: theme.colors.textMuted, lineHeight: 18, marginBottom: 6 },
+  tapLabel: { ...theme.typography.caption, color: theme.colors.accent, textAlign: 'right', letterSpacing: 0.5 },
 });

@@ -176,7 +176,6 @@ export default function MissionDetailScreen() {
       >
         {/* Hero Section */}
         <LinearGradient colors={gradientColors} style={styles.hero}>
-          {/* Back Button */}
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
@@ -187,7 +186,6 @@ export default function MissionDetailScreen() {
             <Text style={styles.backLabel}>Missions</Text>
           </TouchableOpacity>
 
-          {/* Hero Content */}
           <View style={styles.heroContent}>
             <View style={styles.heroIconWrapper}>
               <Text style={styles.heroIcon}>{TYPE_ICONS[mission.type]}</Text>
@@ -206,16 +204,13 @@ export default function MissionDetailScreen() {
           </View>
         </LinearGradient>
 
-        {/* Body */}
         <View style={styles.body}>
-          {/* About Section */}
           <View style={styles.section}>
             <Text style={styles.sectionEyebrow}>MISSION BRIEF</Text>
             <Text style={styles.sectionTitle}>About This Mission</Text>
             <Text style={styles.descriptionText}>{mission.description}</Text>
           </View>
 
-          {/* Highlights Section */}
           <View style={styles.section}>
             <Text style={styles.sectionEyebrow}>KEY ACHIEVEMENTS</Text>
             <Text style={styles.sectionTitle}>Mission Highlights</Text>
@@ -231,7 +226,6 @@ export default function MissionDetailScreen() {
             </View>
           </View>
 
-          {/* Stats Section */}
           <View style={styles.section}>
             <Text style={styles.sectionEyebrow}>AT A GLANCE</Text>
             <Text style={styles.sectionTitle}>Mission Stats</Text>
@@ -241,26 +235,15 @@ export default function MissionDetailScreen() {
                 <StatCard label="Year" value={String(mission.year)} />
               </View>
               <View style={styles.statsRow}>
-                <StatCard
-                  label="Mission Type"
-                  value={TYPE_LABELS[mission.type]}
-                />
-                <StatCard
-                  label="Status"
-                  value={statusConf.label}
-                  accentColor={statusAccentColor}
-                />
+                <StatCard label="Mission Type" value={TYPE_LABELS[mission.type]} />
+                <StatCard label="Status" value={statusConf.label} accentColor={statusAccentColor} />
               </View>
               <View style={styles.statsRow}>
-                <StatCard
-                  label={typeInfo.label}
-                  value={typeInfo.value}
-                />
+                <StatCard label={typeInfo.label} value={typeInfo.value} />
               </View>
             </View>
           </View>
 
-          {/* Mission Type Info Section */}
           <View style={[styles.section, styles.infoSection]}>
             <View style={styles.infoHeader}>
               <Text style={styles.infoIcon}>{TYPE_ICONS[mission.type]}</Text>
@@ -277,18 +260,9 @@ export default function MissionDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 48,
-  },
-
-  // Hero
+  safeArea: { flex: 1, backgroundColor: theme.colors.background },
+  scrollView: { flex: 1 },
+  scrollContent: { paddingBottom: 48 },
   hero: {
     paddingTop: theme.spacing.sm,
     paddingBottom: theme.spacing.xl,
@@ -304,20 +278,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     marginBottom: theme.spacing.md,
   },
-  backIcon: {
-    fontSize: 20,
-    color: 'rgba(255,255,255,0.9)',
-    fontWeight: '600',
-  },
-  backLabel: {
-    ...theme.typography.label,
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 14,
-  },
-  heroContent: {
-    alignItems: 'flex-start',
-    paddingTop: theme.spacing.sm,
-  },
+  backIcon: { fontSize: 20, color: 'rgba(255,255,255,0.9)', fontWeight: '600' },
+  backLabel: { ...theme.typography.label, color: 'rgba(255,255,255,0.75)', fontSize: 14 },
+  heroContent: { alignItems: 'flex-start', paddingTop: theme.spacing.sm },
   heroIconWrapper: {
     width: 64,
     height: 64,
@@ -329,65 +292,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',
   },
-  heroIcon: {
-    fontSize: 34,
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: theme.borderRadius.full,
-    marginBottom: theme.spacing.sm,
-  },
-  statusBadgeText: {
-    ...theme.typography.label,
-    fontSize: 11,
-    letterSpacing: 1.5,
-  },
-  heroName: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: theme.colors.white,
-    letterSpacing: -0.5,
-    marginBottom: 6,
-    lineHeight: 38,
-  },
-  heroMeta: {
-    ...theme.typography.body,
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 14,
-  },
-
-  // Body
-  body: {
-    paddingHorizontal: theme.spacing.md,
-    paddingTop: theme.spacing.lg,
-  },
-  section: {
-    marginBottom: theme.spacing.xl,
-  },
-  sectionEyebrow: {
-    ...theme.typography.label,
-    color: theme.colors.accent,
-    letterSpacing: 2,
-    marginBottom: 6,
-  },
-  sectionTitle: {
-    ...theme.typography.h2,
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.md,
-  },
-
-  // Description
-  descriptionText: {
-    ...theme.typography.body,
-    color: theme.colors.textSecondary,
-    lineHeight: 24,
-  },
-
-  // Highlights
-  highlightsList: {
-    gap: 12,
-  },
+  heroIcon: { fontSize: 34 },
+  statusBadge: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: theme.borderRadius.full, marginBottom: theme.spacing.sm },
+  statusBadgeText: { ...theme.typography.label, fontSize: 11, letterSpacing: 1.5 },
+  heroName: { fontSize: 32, fontWeight: '800', color: theme.colors.white, letterSpacing: -0.5, marginBottom: 6, lineHeight: 38 },
+  heroMeta: { ...theme.typography.body, color: 'rgba(255,255,255,0.7)', fontSize: 14 },
+  body: { paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.lg },
+  section: { marginBottom: theme.spacing.xl },
+  sectionEyebrow: { ...theme.typography.label, color: theme.colors.accent, letterSpacing: 2, marginBottom: 6 },
+  sectionTitle: { ...theme.typography.h2, color: theme.colors.textPrimary, marginBottom: theme.spacing.md },
+  descriptionText: { ...theme.typography.body, color: theme.colors.textSecondary, lineHeight: 24 },
+  highlightsList: { gap: 12 },
   highlightItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -398,32 +313,11 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
     gap: theme.spacing.sm,
   },
-  highlightBulletWrapper: {
-    paddingTop: 6,
-  },
-  highlightBullet: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.accent,
-  },
-  highlightText: {
-    ...theme.typography.body,
-    color: theme.colors.textPrimary,
-    flex: 1,
-    lineHeight: 22,
-  },
-
-  // Stats
-  statsGrid: {
-    gap: theme.spacing.sm,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-  },
-
-  // Info Section
+  highlightBulletWrapper: { paddingTop: 6 },
+  highlightBullet: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.colors.accent },
+  highlightText: { ...theme.typography.body, color: theme.colors.textPrimary, flex: 1, lineHeight: 22 },
+  statsGrid: { gap: theme.spacing.sm },
+  statsRow: { flexDirection: 'row', gap: theme.spacing.sm },
   infoSection: {
     backgroundColor: theme.colors.backgroundCard,
     borderWidth: 1,
@@ -431,23 +325,8 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.lg,
     padding: theme.spacing.md,
   },
-  infoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.sm,
-    marginBottom: theme.spacing.sm,
-  },
-  infoIcon: {
-    fontSize: 20,
-  },
-  infoEyebrow: {
-    ...theme.typography.label,
-    color: theme.colors.accent,
-    letterSpacing: 2,
-  },
-  infoText: {
-    ...theme.typography.body,
-    color: theme.colors.textSecondary,
-    lineHeight: 24,
-  },
+  infoHeader: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm, marginBottom: theme.spacing.sm },
+  infoIcon: { fontSize: 20 },
+  infoEyebrow: { ...theme.typography.label, color: theme.colors.accent, letterSpacing: 2 },
+  infoText: { ...theme.typography.body, color: theme.colors.textSecondary, lineHeight: 24 },
 });
